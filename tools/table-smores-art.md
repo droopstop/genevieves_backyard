@@ -11,4 +11,3 @@ Use case: illustration-story. Asset type: one transparent game sprite atlas with
 ## Final edit prompt
 
 Use case: background-extraction. Edit target: the supplied SIX-POSE game sprite atlas. Remove the entire brown/black/colored backdrop, all glow and all ground shadows. Everything around and between the six girl silhouettes, stools and handheld props MUST be actual fully transparent alpha, not a painted backdrop, not a checkerboard image. Keep all six sprites intact, preserve every face, garment, shoe, hand and prop. Keep the EXACT three-column two-row layout and same canvas dimensions. Additionally mirror each of the THREE TOP ROW sprites horizontally IN ITS OWN CELL so the girl's face and plate point LEFT, keeping their cell positions the same. The THREE BOTTOM ROW sprites remain facing RIGHT unchanged. Nothing else changes. Deliver a true transparent-background RGBA sprite atlas.
-
