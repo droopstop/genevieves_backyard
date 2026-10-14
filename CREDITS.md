@@ -54,3 +54,8 @@ Activity poses (`images/activity-poses.png`) and separate wooden swing frame
 (`images/swing-frame.png`): generated with OpenAI image generation using the
 existing character and yard artwork as references. Prompts and implementation
 notes are in `tools/activity-art.md`.
+
+Table setting and s'more activity poses (`images/table-smores-poses.png`):
+generated with OpenAI image generation using Genevieve's activity atlas as a
+reference. The poses include a plate, low step stool, roasting skewer,
+marshmallow and finished s'more. Final prompts are in `tools/table-smores-art.md`.

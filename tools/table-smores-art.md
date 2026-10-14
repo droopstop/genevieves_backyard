@@ -1,0 +1,14 @@
+# Table setting and s’more artwork
+
+Generated with the built-in OpenAI image-generation tool using `images/activity-poses.png` as the character reference.
+
+Runtime asset: `images/table-smores-poses.png`. Sprite bounds: `tools/table-smores-pose-bounds.json`. Loading: `source/craft-poses.brs`. Animation stages: `DrawTableSetting` and `DrawSmoreMaking` in `source/activity-poses.brs`.
+
+## Generation prompt
+
+Use case: illustration-story. Asset type: one transparent game sprite atlas with EXACTLY THREE COLUMNS and TWO ROWS, six equally sized isolated cells, generous transparent gutters. Reference image shows Genevieve's exact identity and storybook painted style. Preserve brown bob hair, pink bow, large brown eyes, pink puff sleeve floral dress, white socks and pink shoes, toddler proportions. Normal short arms with bent elbows and natural hands; no stretched arms. Consistent head and body size in all six cells. Top row is TABLE SETTING, all facing LEFT: cell1 girl standing on a small low honey-brown wooden step stool, holding one small white round plate close to her chest with BOTH bent arms; cell2 SAME girl and SAME stool, leaning slightly left and lowering that plate a short distance to an imaginary table at chest height, elbows remain bent and hands close to her body; cell3 SAME girl standing on SAME stool, smiling with empty hands resting naturally after placing the plate. No table drawn, only girl, stool, and plate in first two cells. Bottom row is MAKING A SMORE, all facing RIGHT: cell1 girl kneeling, holding a short wooden roasting skewer in BOTH hands close to her waist, skewer points diagonally upward to the right with a white marshmallow on its tip; cell2 matching kneeling pose, hands gently turning the SAME skewer, marshmallow now lightly golden toasted; cell3 matching kneeling girl smiling holding a finished graham cracker chocolate marshmallow sandwich in BOTH hands close to her chest, NO stick. Skewer length about half her full standing height, not a huge pole. Whole figure and every prop visible inside each cell, no fire, scenery, labels, lines, grid, or background. Actual transparent alpha.
+
+## Final edit prompt
+
+Use case: background-extraction. Edit target: the supplied SIX-POSE game sprite atlas. Remove the entire brown/black/colored backdrop, all glow and all ground shadows. Everything around and between the six girl silhouettes, stools and handheld props MUST be actual fully transparent alpha, not a painted backdrop, not a checkerboard image. Keep all six sprites intact, preserve every face, garment, shoe, hand and prop. Keep the EXACT three-column two-row layout and same canvas dimensions. Additionally mirror each of the THREE TOP ROW sprites horizontally IN ITS OWN CELL so the girl's face and plate point LEFT, keeping their cell positions the same. The THREE BOTTOM ROW sprites remain facing RIGHT unchanged. Nothing else changes. Deliver a true transparent-background RGBA sprite atlas.
+

@@ -1154,9 +1154,7 @@ sub DrawTaskAnimation(screen, task, dressColor, labelFont)
             DrawActivityPose(screen, pose, x + wave * 4, y, 69)
         end if
     else if action = "smore"
-        DrawGenevieve(screen, 535, 335, dressColor, bob, 3)
-        DrawTaskStroke(screen, 559, 360 + bob, 637, 321 + bob, &hB68B54FF, 3)
-        screen.DrawRect(627, 315 + bob, 15, 12, &hFFF0CFFF)
+        DrawSmoreMaking(screen, frame)
     else if action = "pick" or action = "sticks"
         x = 601 : y = 390
         if action = "sticks" then x = 385 : y = 490
@@ -1175,8 +1173,7 @@ sub DrawTaskAnimation(screen, task, dressColor, labelFont)
             screen.DrawRect(nx + 6, ny - 16, 2, 20, &hFFE06AFF)
         end for
     else if action = "settable"
-        DrawActivityPose(screen, 10, 699, 386, 78)
-        screen.DrawRect(664, 368 + Int(wave * 2), 24, 6, &hF5F0DFFF)
+        DrawTableSetting(screen, frame)
     else if action = "lounger"
         DrawGenevieve(screen, 799, 453, dressColor, bob, 0)
     else if action = "clubhouse"

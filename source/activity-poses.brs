@@ -21,6 +21,7 @@ sub LoadActivityPoses()
         mirrored.Finish()
         m.activityPoses.Push(CreateObject("roRegion", mirrored, 0, 0, rect[2], rect[3]))
     end for
+    LoadCraftPoses()
 end sub
 
 sub DrawActivityPose(screen, index, x, y, height)
@@ -45,4 +46,20 @@ sub DrawPlaysetSwing(screen, frame)
     DrawTaskStroke(screen, 626, 252, swing.x - 22, swing.y + 7, &hC8AF77FF, 2)
     DrawTaskStroke(screen, 670, 257, swing.x + 22, swing.y + 12, &hC8AF77FF, 2)
     DrawTaskStroke(screen, swing.x - 27, swing.y + 7, swing.x + 27, swing.y + 12, &h357A68FF, 6)
+end sub
+
+sub DrawTableSetting(screen, frame)
+    pose = 14
+    if frame >= 40 then pose = 15
+    if frame >= 110 then pose = 16
+    ' Stool feet stay grounded; the illustrated hands carry and place the plate.
+    DrawCraftPose(screen, pose, 729, 397, 108)
+end sub
+
+sub DrawSmoreMaking(screen, frame)
+    pose = 17
+    if frame >= 55 then pose = 18
+    if frame >= 112 then pose = 19
+    ' A short skewer is held in bent arms; the final pose holds the sandwich.
+    DrawCraftPose(screen, pose, 575, 415, 72)
 end sub
