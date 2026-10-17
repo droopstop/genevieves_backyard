@@ -14,6 +14,11 @@ Hippity hop atlas (`images/hippity-hop.png`): purple bouncing toy and Genevieve 
 
 Directional riding atlas (`images/hippity-hop-directions.png`): matching front, back, left, and right riding views, generated with the built-in OpenAI imagegen tool. Prompt recorded in `tools/hippity-hop-art.md`.
 
+Bubble activity atlas (`images/bubble-activity.png`): bubble bottle, round wand,
+and two animated Genevieve wand poses, generated with the built-in OpenAI
+imagegen tool using the directional character atlas as a reference. Prompt
+recorded in `tools/bubble-art.md`.
+
 The illustrated yard object atlas (`images/yard-objects.png`) was generated for Genevieve's Backyard using OpenAI image generation. Sprite regions are defined in `LoadAreaArtwork`.
 
 Original Genevieve and Stitch reference artwork (`images/genevieve-stitch.png`) was generated using OpenAI image generation. It is retained in the source project; the game package uses the directional atlas.

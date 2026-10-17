@@ -16,6 +16,10 @@ Genevieve climbs on, bounces a lap around the yard, and climbs off again.
 Her riding view changes to match her direction: front, back, left, and right.
 Press **Back** during the ride to cancel; you can ride again as often as you like.
 
+Walk to the bubble bottle in the open yard and press **OK**. Genevieve picks up
+the round wand, blows shimmering bubbles that grow as they float, and watches
+them pop. The bottle remains available so the animation can be replayed.
+
 ## Build and install
 
 Run with Python 3; packaging uses only the standard library:

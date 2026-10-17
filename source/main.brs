@@ -12,6 +12,7 @@ sub Main()
     LoadCowArtwork()
     LoadFarmArtwork()
     LoadHippityHopArtwork()
+    LoadBubbleArtwork()
     m.yardProjection = false
 
     fontRegistry = CreateObject("roFontRegistry")
@@ -119,7 +120,11 @@ sub Main()
                     actionDoneFrames = 0
                     upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
                 else if button = 6 and pressed and activeTask = invalid
-                    if currentArea = "yard" and currentAction = "hippityhop"
+                    if currentArea = "yard" and currentAction = "bubbles"
+                        activeTask = {area: "yard", action: "bubbles", frame: 0, duration: 330, x: playerX, y: playerY, facing: playerFacing}
+                        actionDoneFrames = 0
+                        upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
+                    else if currentArea = "yard" and currentAction = "hippityhop"
                         activeTask = {area: "yard", action: "hippityhop", frame: 0, duration: 420, x: playerX, y: playerY, facing: playerFacing}
                         actionDoneFrames = 0
                         upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
@@ -294,7 +299,11 @@ sub Main()
         nearbyPlace = ""
         currentAction = ""
         if currentArea = "yard"
-            if PointInRect(centerX, centerY, 685, 430, 130, 105) then currentAction = "hippityhop"
+            if PointInRect(centerX, centerY, 520, 415, 115, 110)
+                currentAction = "bubbles"
+            else if PointInRect(centerX, centerY, 685, 430, 130, 105)
+                currentAction = "hippityhop"
+            end if
             if PointInRect(centerX, centerY, 205, 110, 165, 190)
                 nearbyPlace = "firepit"
             else if PointInRect(centerX, centerY, 505, 105, 230, 205)
@@ -476,7 +485,10 @@ sub Main()
             DrawGenevieve(screen, playerX, playerY, dressColor, walkBob, playerFacing)
         end if
         if activeTask = invalid
-            if currentArea = "yard" and currentAction = "hippityhop"
+            if currentArea = "yard" and currentAction = "bubbles"
+                screen.DrawRect(330, 82, 620, 52, &h173E52EE)
+                CenterLabel(screen, "Press OK to blow big bubbles", 640, 94, &hFFFFFFFF, promptFont)
+            else if currentArea = "yard" and currentAction = "hippityhop"
                 screen.DrawRect(330, 82, 620, 52, &h173E52EE)
                 CenterLabel(screen, "Press OK to ride the hippity hop", 640, 94, &hFFFFFFFF, promptFont)
             else if currentArea = "yard" and mommy.nearby
@@ -527,6 +539,7 @@ sub Main()
 end sub
 
 function ActionPrompt(area, action)
+    if action = "bubbles" then return "blow big bubbles"
     if action = "hippityhop" then return "bounce around the yard"
     if action = "twirl" then return "twirl around"
     if action = "cow" then return "pet the cow"
@@ -558,6 +571,7 @@ function ActionPrompt(area, action)
 end function
 
 function ActionSuccessMessage(area, action)
+    if action = "bubbles" then return "Wow! Those bubbles were enormous!"
     if action = "hippityhop" then return "Hippity hop! What a bouncy ride!"
     if action = "twirl" then return "What a lovely twirl!"
     if action = "cow" then return "The cow loved those cuddles!"
@@ -833,6 +847,13 @@ sub DrawYard(screen, titleFont, labelFont, bodyFont)
     end if
     if showHippityHop then DrawHippityHopSprite(screen, false, 750, 510, 48, 1)
     CenterLabel(screen, "HIPPITY HOP", SceneX(750), 521, &h173E52FF, labelFont)
+    showBubbleBottle = true
+    if m.renderTask <> invalid
+        if m.renderTask.action = "bubbles" and m.renderTask.frame >= 30 and m.renderTask.frame < 300 then showBubbleBottle = false
+    end if
+    if showBubbleBottle then DrawBubbleBottle(screen, m.bubbleFrame)
+    CenterLabel(screen, "BIG BUBBLES", SceneX(575), 507, &h173E52FF, labelFont)
+    m.bubbleFrame = m.bubbleFrame + 1
     screen.DrawText("Walk near a place to explore | Play/Pause: twirl", 340, 692, &h173E52FF, bodyFont)
 end sub
 
@@ -1131,6 +1152,8 @@ sub DrawTaskAnimation(screen, task, dressColor, labelFont)
     bob = Int(wave * 4)
     if action = "twirl"
         DrawTwirl(screen, task, dressColor)
+    else if action = "bubbles"
+        DrawBubbleActivity(screen, task, dressColor)
     else if action = "hippityhop"
         DrawHippityHopRide(screen, task, dressColor)
     else if action = "cow"
