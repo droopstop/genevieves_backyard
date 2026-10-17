@@ -77,6 +77,7 @@ function LoadNarrationClips()
     clips["MISSION: Veggie Victory. Step 1/1: Pick the vegetables in the garden!"] = "pkg:/audio/narration/ebca409db98b8294.mp3"
     clips["MISSION: Wind Chime Song. Step 1/1: Ring the wind chimes on the deck!"] = "pkg:/audio/narration/85e859f8d34681e5.mp3"
     clips["STEP COMPLETE!. Fly home for your next trip!"] = "pkg:/audio/narration/f9d55eecd3de142f.mp3"
+    clips["YOU DID IT!. Hippity hop! What a bouncy ride!"] = "pkg:/audio/narration/7bdc50fb0bf8f5e0.mp3"
     clips["YOU DID IT!. Stitch loved those cuddles!"] = "pkg:/audio/narration/287c1c9b2ee2369b.mp3"
     clips["YOU DID IT!. The birds have fresh water!"] = "pkg:/audio/narration/05ff5a454c32bacf.mp3"
     clips["YOU DID IT!. The cow loved those cuddles!"] = "pkg:/audio/narration/2c15bc7d47b5a1bb.mp3"

@@ -15,8 +15,8 @@ sub MusicUpdate(speaking)
     elapsed = m.clock.TotalMilliseconds()
     position = elapsed mod (m.sections.Count() * 2000)
     section = Int(position / 2000)
-    volume = 45
-    if speaking or elapsed < m.effectUntil then volume = 12
+    volume = 100
+    if speaking or elapsed < m.effectUntil then volume = 25
     if section <> m.section or volume <> m.volume
         m.PlayAt(position, volume)
     end if

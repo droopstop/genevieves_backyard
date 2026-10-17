@@ -11,6 +11,7 @@ sub Main()
     LoadYardDetailArtwork()
     LoadCowArtwork()
     LoadFarmArtwork()
+    LoadHippityHopArtwork()
     m.yardProjection = false
 
     fontRegistry = CreateObject("roFontRegistry")
@@ -118,7 +119,11 @@ sub Main()
                     actionDoneFrames = 0
                     upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
                 else if button = 6 and pressed and activeTask = invalid
-                    if currentArea = "yard" and mommy.nearby
+                    if currentArea = "yard" and currentAction = "hippityhop"
+                        activeTask = {area: "yard", action: "hippityhop", frame: 0, duration: 420, x: playerX, y: playerY, facing: playerFacing}
+                        actionDoneFrames = 0
+                        upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
+                    else if currentArea = "yard" and mommy.nearby
                         mission = GetMommyMission(mommy.missionIndex)
                         missionStepIndex = 0
                         missionCompleted = false
@@ -289,6 +294,7 @@ sub Main()
         nearbyPlace = ""
         currentAction = ""
         if currentArea = "yard"
+            if PointInRect(centerX, centerY, 685, 430, 130, 105) then currentAction = "hippityhop"
             if PointInRect(centerX, centerY, 205, 110, 165, 190)
                 nearbyPlace = "firepit"
             else if PointInRect(centerX, centerY, 505, 105, 230, 205)
@@ -451,7 +457,11 @@ sub Main()
             DrawCows(screen, cows)
             DrawMommy(screen, mommy, labelFont)
         end if
-        if currentArea = "yard" and activeTask = invalid
+        drawWalkingStitch = currentArea = "yard"
+        if activeTask <> invalid
+            if activeTask.action = "stitch" then drawWalkingStitch = false
+        end if
+        if drawWalkingStitch
             DrawStitch(screen, dogX, dogY, dogAnimationFrame, labelFont, dogFacing)
         end if
         walkBob = 0
@@ -466,7 +476,10 @@ sub Main()
             DrawGenevieve(screen, playerX, playerY, dressColor, walkBob, playerFacing)
         end if
         if activeTask = invalid
-            if currentArea = "yard" and mommy.nearby
+            if currentArea = "yard" and currentAction = "hippityhop"
+                screen.DrawRect(330, 82, 620, 52, &h173E52EE)
+                CenterLabel(screen, "Press OK to ride the hippity hop", 640, 94, &hFFFFFFFF, promptFont)
+            else if currentArea = "yard" and mommy.nearby
                 screen.DrawRect(390, 82, 500, 52, &h173E52EE)
                 CenterLabel(screen, "Press OK for Mommy's mission", 640, 94, &hFFFFFFFF, promptFont)
             else if currentArea = "yard" and nearbyCow >= 0
@@ -514,6 +527,7 @@ sub Main()
 end sub
 
 function ActionPrompt(area, action)
+    if action = "hippityhop" then return "bounce around the yard"
     if action = "twirl" then return "twirl around"
     if action = "cow" then return "pet the cow"
     if action = "weed" then return "weed the garden"
@@ -544,6 +558,7 @@ function ActionPrompt(area, action)
 end function
 
 function ActionSuccessMessage(area, action)
+    if action = "hippityhop" then return "Hippity hop! What a bouncy ride!"
     if action = "twirl" then return "What a lovely twirl!"
     if action = "cow" then return "The cow loved those cuddles!"
     if action = "weed" then return "The garden is free of weeds!"
@@ -812,6 +827,12 @@ sub DrawYard(screen, titleFont, labelFont, bodyFont)
     CenterLabel(screen, "HOUSE", SceneX(1117), 415, &h173E52FF, bodyFont)
     DrawYardDetail(screen, 1, 966, 354, 185, 175)
     CenterLabel(screen, "DECK", SceneX(966), 448, &h173E52FF, labelFont)
+    showHippityHop = true
+    if m.renderTask <> invalid
+        if m.renderTask.action = "hippityhop" and m.renderTask.frame >= 30 and m.renderTask.frame < 390 then showHippityHop = false
+    end if
+    if showHippityHop then DrawHippityHopSprite(screen, false, 750, 510, 48, 1)
+    CenterLabel(screen, "HIPPITY HOP", SceneX(750), 521, &h173E52FF, labelFont)
     screen.DrawText("Walk near a place to explore | Play/Pause: twirl", 340, 692, &h173E52FF, bodyFont)
 end sub
 
@@ -1110,6 +1131,8 @@ sub DrawTaskAnimation(screen, task, dressColor, labelFont)
     bob = Int(wave * 4)
     if action = "twirl"
         DrawTwirl(screen, task, dressColor)
+    else if action = "hippityhop"
+        DrawHippityHopRide(screen, task, dressColor)
     else if action = "cow"
         DrawCowPetting(screen, task, dressColor)
     else if action = "stitch"

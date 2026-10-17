@@ -11,6 +11,11 @@ complete missions and collect treasures.
 - Play/Pause: twirl.
 - Back: cancel an activity or return from an area; exits from the yard.
 
+Walk to the purple **Hippity Hop** in the open yard and press **OK** to ride.
+Genevieve climbs on, bounces a lap around the yard, and climbs off again.
+Her riding view changes to match her direction: front, back, left, and right.
+Press **Back** during the ride to cancel; you can ride again as often as you like.
+
 ## Build and install
 
 Run with Python 3; packaging uses only the standard library:
@@ -45,3 +50,11 @@ Narration is generated offline with Piper; regeneration requires `piper-tts`,
 `imageio-ffmpeg`, and the voice model described in `CREDITS.md`. The game itself
 does not require a speech service or an internet connection. Music sections can
 be rebuilt with `tools/build_music_layer.py` using `imageio-ffmpeg`.
+
+The game uses the same audio mix on every device: background music at level
+100, lowered to 25 during narration or the cow sound. Music restores to 100
+after speech or effects finish. Hippity hop narration uses the same bundled
+Lessac voice as the other activities.
+
+The background recording is normalized as a whole to -16 LUFS with a
+-1.5 dB true-peak limit before it is split into playback sections.

@@ -6,9 +6,13 @@
 - Source: Wikimedia Commons / CHARM–HMV
 - Source page: https://commons.wikimedia.org/wiki/File:Tchaikovsky_Swan_Lake_Op.20_No.10._Sc%C3%A8ne.ogg
 - Copyright status: Public domain
-- Bundled files: `audio/music/*.wav`, mono PCM sections of the Wikimedia Commons MP3 transcode
+- Bundled files: `audio/music/*.wav`, mono PCM sections of the Wikimedia Commons MP3 transcode, normalized as a whole to -16 LUFS with a -1.5 dB true-peak limit
 
 # Artwork
+
+Hippity hop atlas (`images/hippity-hop.png`): purple bouncing toy and Genevieve riding it, generated with the built-in OpenAI imagegen tool using the activity artwork as a reference. Prompt recorded in `tools/hippity-hop-art.md`.
+
+Directional riding atlas (`images/hippity-hop-directions.png`): matching front, back, left, and right riding views, generated with the built-in OpenAI imagegen tool. Prompt recorded in `tools/hippity-hop-art.md`.
 
 The illustrated yard object atlas (`images/yard-objects.png`) was generated for Genevieve's Backyard using OpenAI image generation. Sprite regions are defined in `LoadAreaArtwork`.
 
