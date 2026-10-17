@@ -20,6 +20,10 @@ Walk to the bubble bottle in the open yard and press **OK**. Genevieve picks up
 the round wand, blows shimmering bubbles that grow as they float, and watches
 them pop. The bottle remains available so the animation can be replayed.
 
+In **Birdsong Garden**, walk to the shovel in its stand and press **OK**.
+Genevieve carries it to the dirt patch, digs several scoops into the yellow
+bucket, carries the shovel back, and returns it to its original position.
+
 ## Build and install
 
 Run with Python 3; packaging uses only the standard library:

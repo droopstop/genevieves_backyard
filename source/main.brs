@@ -13,6 +13,7 @@ sub Main()
     LoadFarmArtwork()
     LoadHippityHopArtwork()
     LoadBubbleArtwork()
+    LoadGardenDigArtwork()
     m.yardProjection = false
 
     fontRegistry = CreateObject("roFontRegistry")
@@ -120,7 +121,11 @@ sub Main()
                     actionDoneFrames = 0
                     upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
                 else if button = 6 and pressed and activeTask = invalid
-                    if currentArea = "yard" and currentAction = "bubbles"
+                    if currentArea = "grove" and currentAction = "dig"
+                        activeTask = {area: "grove", action: "dig", frame: 0, duration: 470, x: playerX, y: playerY, facing: playerFacing}
+                        actionDoneFrames = 0
+                        upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
+                    else if currentArea = "yard" and currentAction = "bubbles"
                         activeTask = {area: "yard", action: "bubbles", frame: 0, duration: 330, x: playerX, y: playerY, facing: playerFacing}
                         actionDoneFrames = 0
                         upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
@@ -332,7 +337,9 @@ sub Main()
                 currentAction = "clubhouse"
             end if
         else if currentArea = "grove"
-            if PointInRect(centerX, centerY, 40, 155, 250, 420)
+            if PointInRect(centerX, centerY, 220, 500, 180, 125)
+                currentAction = "dig"
+            else if PointInRect(centerX, centerY, 40, 155, 250, 420)
                 currentAction = "treehang"
             else if PointInRect(centerX, centerY, 350, 165, 260, 410)
                 currentAction = "birdbath"
@@ -539,6 +546,7 @@ sub Main()
 end sub
 
 function ActionPrompt(area, action)
+    if action = "dig" then return "carry the shovel and fill the bucket"
     if action = "bubbles" then return "blow big bubbles"
     if action = "hippityhop" then return "bounce around the yard"
     if action = "twirl" then return "twirl around"
@@ -571,6 +579,7 @@ function ActionPrompt(area, action)
 end function
 
 function ActionSuccessMessage(area, action)
+    if action = "dig" then return "The bucket is full and the shovel is put away!"
     if action = "bubbles" then return "Wow! Those bubbles were enormous!"
     if action = "hippityhop" then return "Hippity hop! What a bouncy ride!"
     if action = "twirl" then return "What a lovely twirl!"
@@ -959,6 +968,7 @@ sub DrawGrove(screen, titleFont, labelFont, promptFont, bodyFont, completedActio
     DrawYardDetail(screen, 2, 1120, 340, 225, 220)
     CenterLabel(screen, "WEED THE GARDEN", 1120, 452, &hFFF0C2FF, labelFont)
     DrawDone(screen, completedActions, "grove:weed", 1074, 480, labelFont)
+    DrawGardenDigStation(screen, m.renderTask, completedActions, labelFont)
     DrawExit(screen, labelFont, bodyFont)
 end sub
 
@@ -1152,6 +1162,8 @@ sub DrawTaskAnimation(screen, task, dressColor, labelFont)
     bob = Int(wave * 4)
     if action = "twirl"
         DrawTwirl(screen, task, dressColor)
+    else if action = "dig"
+        DrawGardenDigActivity(screen, task, dressColor)
     else if action = "bubbles"
         DrawBubbleActivity(screen, task, dressColor)
     else if action = "hippityhop"

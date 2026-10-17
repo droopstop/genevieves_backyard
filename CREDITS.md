@@ -19,6 +19,11 @@ and two animated Genevieve wand poses, generated with the built-in OpenAI
 imagegen tool using the directional character atlas as a reference. Prompt
 recorded in `tools/bubble-art.md`.
 
+Birdsong Garden digging props (`images/garden-dig-props.png`) and Genevieve
+digging poses (`images/garden-dig-poses.png`): generated with the built-in
+OpenAI imagegen tool using the yard, activity, and directional character atlases
+as references. Prompts recorded in `tools/garden-dig-art.md`.
+
 The illustrated yard object atlas (`images/yard-objects.png`) was generated for Genevieve's Backyard using OpenAI image generation. Sprite regions are defined in `LoadAreaArtwork`.
 
 Original Genevieve and Stitch reference artwork (`images/genevieve-stitch.png`) was generated using OpenAI image generation. It is retained in the source project; the game package uses the directional atlas.
