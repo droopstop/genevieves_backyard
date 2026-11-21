@@ -185,13 +185,22 @@ function RoomActivityLabel(action)
 end function
 
 sub LoadUpstairsArtwork()
-    m.upstairsBackdrops = {
-        bedroom: CreateObject("roBitmap", "pkg:/images/upstairs-bedroom.jpg")
-        playroom: CreateObject("roBitmap", "pkg:/images/upstairs-playroom.jpg")
-        bonusroom: CreateObject("roBitmap", "pkg:/images/upstairs-bonusroom.jpg")
-        parentsroom: CreateObject("roBitmap", "pkg:/images/upstairs-parentsroom.jpg")
-    }
+    ' Keep room backdrops out of the startup texture budget on smaller Roku TVs.
+    m.upstairsBackdrops = {}
+    m.loadedUpstairsArea = ""
     m.houseStairs = CreateObject("roBitmap", "pkg:/images/house-stairs.png")
+end sub
+
+sub UpdateUpstairsArtwork(area)
+    if m.loadedUpstairsArea = area then return
+    m.upstairsBackdrops = {}
+    m.loadedUpstairsArea = area
+    uri = ""
+    if area = "bedroom" then uri = "pkg:/images/upstairs-bedroom.jpg"
+    if area = "playroom" then uri = "pkg:/images/upstairs-playroom.jpg"
+    if area = "bonusroom" then uri = "pkg:/images/upstairs-bonusroom.jpg"
+    if area = "parentsroom" then uri = "pkg:/images/upstairs-parentsroom.jpg"
+    if uri <> "" then m.upstairsBackdrops[area] = CreateObject("roBitmap", uri)
 end sub
 
 function IsSeatAction(action)

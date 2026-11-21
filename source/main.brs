@@ -563,6 +563,7 @@ sub Main()
         showActionBanner = actionDoneFrames > 0 and activeTask = invalid
         UpdateMissionPresentation(missionPresentation, missionHud, actionHeading, actionMessage, showActionBanner, missionCompleted, mommyElapsed, missionVoice)
 
+        UpdateUpstairsArtwork(currentArea)
         m.renderTask = activeTask
         m.yardProjection = currentArea = "yard"
         if currentArea = "yard"
@@ -1823,6 +1824,7 @@ end function
 
 sub DrawCows(screen, cows)
     ' Full bodies stay on the pasture side, underneath the tree canopy.
+    if m.cowPastureCanvas = invalid then return
     m.cowPastureCanvas.Clear(&h00000000)
     for each cow in cows
         if cow.state = "walkingout" or cow.state = "walkinghome"
