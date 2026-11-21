@@ -26,12 +26,7 @@ sub LoadIndoorActivityArtwork(area)
 end sub
 
 sub LoadIndoorSeatArtwork()
-    m.indoorSeatSprites = []
-    atlas = CreateObject("roBitmap", "pkg:/images/indoor-sitting.png")
-    if atlas = invalid then return
-    for each rect in IndoorSittingBounds()
-        m.indoorSeatSprites.Push(CreateObject("roRegion", atlas, rect[0], rect[1], rect[2], rect[3]))
-    end for
+    SetIndoorWardrobeOutfit(0)
 end sub
 
 function IndoorAnimationPlacement(action)
@@ -50,6 +45,11 @@ function IndoorAnimationPlacement(action)
 end function
 
 sub DrawIndoorActivityFrame(screen, task, dressColor)
+    if task.action = "cozyread"
+        DrawIndoorSitting(screen, {x: 220, y: 365, pose: 0}, task.frame, dressColor)
+        DrawIndoorResultProp(screen, 10, 220, 345, 38, 26)
+        return
+    end if
     room = UpstairsRoom(task.area)
     if room = invalid then return
     row = 0

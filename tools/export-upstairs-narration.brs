@@ -1,5 +1,5 @@
 sub Main()
-    texts = ["Sit down and relax. Press OK or Back to stand up."]
+    texts = ["Sit down and relax. Use an arrow button to stand up."]
     for each area in ["house", "upstairs", "bedroom", "playroom", "bonusroom", "parentsroom"]
         texts.Push(RoomWelcome(area))
         room = UpstairsRoom(area)
@@ -7,6 +7,11 @@ sub Main()
             for each action in room.stations
                 texts.Push(UpstairsPrompt(action) + ".")
                 texts.Push("YOU DID IT!. " + UpstairsSuccess(action))
+                if IsIndoorStoryAction(action)
+                    for each line in IndoorStoryLines(action)
+                        texts.Push(line)
+                    end for
+                end if
             end for
         end if
     end for

@@ -1,8 +1,8 @@
 [
   {
-    "sample": "01-sit-down-and-relax-press-ok-or-back-to-stand-up.mp3",
-    "text": "Sit down and relax. Press OK or Back to stand up.",
-    "runtime_clip": "audio/narration/49d07d3fa4d165b2.mp3"
+    "sample": "01-sit-down-and-relax-use-an-arrow-button-to-stand-up.mp3",
+    "text": "Sit down and relax. Use an arrow button to stand up.",
+    "runtime_clip": "audio/narration/42114aa77bd792de.mp3"
   },
   {
     "sample": "02-you-are-downstairs-with-pops.mp3",
@@ -40,127 +40,172 @@
     "runtime_clip": "audio/narration/e8dbc7ef3337b069.mp3"
   },
   {
-    "sample": "09-try-on-colorful-bows.mp3",
-    "text": "try on colorful bows.",
-    "runtime_clip": "audio/narration/b9d6f77fc74c8d3a.mp3"
+    "sample": "09-genevieve-found-a-tiny-butterfly-resting-beside-her-window.mp3",
+    "text": "Genevieve found a tiny butterfly resting beside her window.",
+    "runtime_clip": "audio/narration/90a511c7bf0f323a.mp3"
   },
   {
-    "sample": "10-you-did-it-you-tried-pink-purple-and-golden-bows.mp3",
-    "text": "YOU DID IT!. You tried pink, purple, and golden bows!",
-    "runtime_clip": "audio/narration/c167d035ed0a4eff.mp3"
+    "sample": "10-she-opened-her-picture-book-and-imagined-a-garden-full-of-colorful-wings.mp3",
+    "text": "She opened her picture book, and imagined a garden full of colorful wings.",
+    "runtime_clip": "audio/narration/0d8eb68df2ac6854.mp3"
   },
   {
-    "sample": "11-welcome-to-your-playroom-explore-the-dollhouse-cook-pretend-food-or-draw-a-rainbow.mp3",
+    "sample": "11-stitch-curled-up-nearby-and-they-dreamed-of-tomorrow-s-backyard-adventures.mp3",
+    "text": "Stitch curled up nearby, and they dreamed of tomorrow's backyard adventures.",
+    "runtime_clip": "audio/narration/bcedf2a11c370333.mp3"
+  },
+  {
+    "sample": "12-choose-a-pretty-outfit.mp3",
+    "text": "choose a pretty outfit.",
+    "runtime_clip": "audio/narration/ee684b4f5ab87ed6.mp3"
+  },
+  {
+    "sample": "13-you-did-it-your-new-outfit-looks-lovely.mp3",
+    "text": "YOU DID IT!. Your new outfit looks lovely!",
+    "runtime_clip": "audio/narration/1b0a47a6cd74882a.mp3"
+  },
+  {
+    "sample": "14-welcome-to-your-playroom-explore-the-dollhouse-cook-pretend-food-or-draw-a-rainbow.mp3",
     "text": "Welcome to your playroom! Explore the dollhouse, cook pretend food, or draw a rainbow.",
     "runtime_clip": "audio/narration/477a5f7a8e1d6f82.mp3"
   },
   {
-    "sample": "12-play-with-the-dollhouse.mp3",
+    "sample": "15-play-with-the-dollhouse.mp3",
     "text": "play with the dollhouse.",
     "runtime_clip": "audio/narration/f8b5f42f1e46eae4.mp3"
   },
   {
-    "sample": "13-you-did-it-the-dolls-loved-your-happy-little-house.mp3",
+    "sample": "16-you-did-it-the-dolls-loved-your-happy-little-house.mp3",
     "text": "YOU DID IT!. The dolls loved your happy little house!",
     "runtime_clip": "audio/narration/88e61c4e9b4da107.mp3"
   },
   {
-    "sample": "14-cook-a-pretend-lunch.mp3",
+    "sample": "17-cook-a-pretend-lunch.mp3",
     "text": "cook a pretend lunch.",
     "runtime_clip": "audio/narration/4829cb520baf2c7b.mp3"
   },
   {
-    "sample": "15-you-did-it-your-pretend-lunch-looks-delicious.mp3",
+    "sample": "18-you-did-it-your-pretend-lunch-looks-delicious.mp3",
     "text": "YOU DID IT!. Your pretend lunch looks delicious!",
     "runtime_clip": "audio/narration/f57ea0bb4ca77bf5.mp3"
   },
   {
-    "sample": "16-draw-a-rainbow-on-the-whiteboard.mp3",
+    "sample": "19-draw-a-rainbow-on-the-whiteboard.mp3",
     "text": "draw a rainbow on the whiteboard.",
     "runtime_clip": "audio/narration/3d948995b65f443f.mp3"
   },
   {
-    "sample": "17-you-did-it-you-drew-a-beautiful-rainbow.mp3",
+    "sample": "20-you-did-it-you-drew-a-beautiful-rainbow.mp3",
     "text": "YOU DID IT!. You drew a beautiful rainbow!",
     "runtime_clip": "audio/narration/743c63e66b2f5905.mp3"
   },
   {
-    "sample": "18-welcome-to-the-bonus-room-enjoy-a-couch-story-a-rainbow-puzzle-and-the-sparkling-chri.mp3",
+    "sample": "21-welcome-to-the-bonus-room-enjoy-a-couch-story-a-rainbow-puzzle-and-the-sparkling-chri.mp3",
     "text": "Welcome to the bonus room! Enjoy a couch story, a rainbow puzzle, and the sparkling Christmas tree.",
     "runtime_clip": "audio/narration/b9cdcae389e9e325.mp3"
   },
   {
-    "sample": "19-read-a-story-on-the-couch.mp3",
+    "sample": "22-read-a-story-on-the-couch.mp3",
     "text": "read a story on the couch.",
     "runtime_clip": "audio/narration/db26e85a639601ba.mp3"
   },
   {
-    "sample": "20-you-did-it-what-a-cozy-story-on-the-couch.mp3",
+    "sample": "23-you-did-it-what-a-cozy-story-on-the-couch.mp3",
     "text": "YOU DID IT!. What a cozy story on the couch!",
     "runtime_clip": "audio/narration/6654623ec12d7206.mp3"
   },
   {
-    "sample": "21-put-together-a-rainbow-puzzle.mp3",
+    "sample": "24-once-upon-a-time-genevieve-and-stitch-found-a-shiny-little-star-in-the-backyard.mp3",
+    "text": "Once upon a time, Genevieve and Stitch found a shiny little star in the backyard.",
+    "runtime_clip": "audio/narration/c95ad4ff21b965f9.mp3"
+  },
+  {
+    "sample": "25-they-carried-it-past-the-flowers-and-gave-it-a-cozy-home-on-the-christmas-tree.mp3",
+    "text": "They carried it past the flowers and gave it a cozy home on the Christmas tree.",
+    "runtime_clip": "audio/narration/3ed0ab0cdc0c5019.mp3"
+  },
+  {
+    "sample": "26-the-star-twinkled-stitch-wagged-her-tail-and-everyone-smiled-the-end.mp3",
+    "text": "The star twinkled, Stitch wagged her tail, and everyone smiled. The end.",
+    "runtime_clip": "audio/narration/bd252707029df22e.mp3"
+  },
+  {
+    "sample": "27-put-together-a-rainbow-puzzle.mp3",
     "text": "put together a rainbow puzzle.",
     "runtime_clip": "audio/narration/e34690bd8fed5695.mp3"
   },
   {
-    "sample": "22-you-did-it-every-rainbow-puzzle-piece-is-in-place.mp3",
+    "sample": "28-you-did-it-every-rainbow-puzzle-piece-is-in-place.mp3",
     "text": "YOU DID IT!. Every rainbow puzzle piece is in place!",
     "runtime_clip": "audio/narration/e9a1a20d3ef6b923.mp3"
   },
   {
-    "sample": "23-make-the-christmas-tree-twinkle.mp3",
+    "sample": "29-make-the-christmas-tree-twinkle.mp3",
     "text": "make the Christmas tree twinkle.",
     "runtime_clip": "audio/narration/2ba4a64263643035.mp3"
   },
   {
-    "sample": "24-you-did-it-the-christmas-tree-is-sparkling.mp3",
+    "sample": "30-you-did-it-the-christmas-tree-is-sparkling.mp3",
     "text": "YOU DID IT!. The Christmas tree is sparkling!",
     "runtime_clip": "audio/narration/d79c7c3129e9af88.mp3"
   },
   {
-    "sample": "25-welcome-to-mommy-and-daddy-s-room-help-make-the-bed-look-at-family-pictures-and-arran.mp3",
+    "sample": "31-welcome-to-mommy-and-daddy-s-room-help-make-the-bed-look-at-family-pictures-and-arran.mp3",
     "text": "Welcome to Mommy and Daddy's room! Help make the bed, look at family pictures, and arrange flowers.",
     "runtime_clip": "audio/narration/74754a8f724ec519.mp3"
   },
   {
-    "sample": "26-help-make-mommy-and-daddy-s-bed.mp3",
+    "sample": "32-help-make-mommy-and-daddy-s-bed.mp3",
     "text": "help make Mommy and Daddy's bed.",
     "runtime_clip": "audio/narration/d8d6bfafec6d418e.mp3"
   },
   {
-    "sample": "27-you-did-it-thank-you-for-helping-mommy-and-daddy.mp3",
+    "sample": "33-you-did-it-thank-you-for-helping-mommy-and-daddy.mp3",
     "text": "YOU DID IT!. Thank you for helping Mommy and Daddy!",
     "runtime_clip": "audio/narration/b5df84e68c581c49.mp3"
   },
   {
-    "sample": "28-look-at-family-pictures.mp3",
+    "sample": "34-look-at-family-pictures.mp3",
     "text": "look at family pictures.",
     "runtime_clip": "audio/narration/9c470d0f5b7248c2.mp3"
   },
   {
-    "sample": "29-you-did-it-so-many-happy-family-memories.mp3",
+    "sample": "35-you-did-it-so-many-happy-family-memories.mp3",
     "text": "YOU DID IT!. So many happy family memories!",
     "runtime_clip": "audio/narration/96bc2cb79558c531.mp3"
   },
   {
-    "sample": "30-arrange-a-vase-of-flowers.mp3",
+    "sample": "36-here-are-mommy-daddy-and-genevieve-this-is-our-family.mp3",
+    "text": "Here are Mommy, Daddy, and Genevieve. This is our family.",
+    "runtime_clip": "audio/narration/bcc7422d6227aa0a.mp3"
+  },
+  {
+    "sample": "37-we-love-playing-together-sharing-stories-and-helping-each-other.mp3",
+    "text": "We love playing together, sharing stories, and helping each other.",
+    "runtime_clip": "audio/narration/d3a78c50e54e2568.mp3"
+  },
+  {
+    "sample": "38-every-happy-day-becomes-another-wonderful-family-memory.mp3",
+    "text": "Every happy day becomes another wonderful family memory.",
+    "runtime_clip": "audio/narration/019d3c93312f1963.mp3"
+  },
+  {
+    "sample": "39-arrange-a-vase-of-flowers.mp3",
     "text": "arrange a vase of flowers.",
     "runtime_clip": "audio/narration/662f9e8e0e89c7b5.mp3"
   },
   {
-    "sample": "31-you-did-it-your-flowers-look-beautiful.mp3",
+    "sample": "40-you-did-it-your-flowers-look-beautiful.mp3",
     "text": "YOU DID IT!. Your flowers look beautiful!",
     "runtime_clip": "audio/narration/f30c332b5a65bc20.mp3"
   },
   {
-    "sample": "32-climb-the-stairs-upstairs.mp3",
+    "sample": "41-climb-the-stairs-upstairs.mp3",
     "text": "climb the stairs upstairs.",
     "runtime_clip": "audio/narration/04a078dd6b7c86f3.mp3"
   },
   {
-    "sample": "33-go-downstairs-to-pops.mp3",
+    "sample": "42-go-downstairs-to-pops.mp3",
     "text": "go downstairs to Pops.",
     "runtime_clip": "audio/narration/1e7abf3720611177.mp3"
   }

@@ -14,6 +14,7 @@ sub Main()
     clips = LoadNarrationClips()
     m.yardProjection = false
     InitializeIndoorPreviewSprites()
+    CheckIndoor(m.indoorWorld.Count() = 0, "new room activities begin without completed results")
     screen = {Clear: TestClear, DrawRect: TestRect, DrawText: TestText, DrawScaledObject: TestSprite, commands: []}
     titleFont = {size: 34, GetOneLineWidth: TestWidth}
     labelFont = {size: 20, GetOneLineWidth: TestWidth}
@@ -37,6 +38,8 @@ sub Main()
         CheckIndoor(UpstairsReturn(area).area = "upstairs", "Back returns from room to hall")
         room = UpstairsRoom(area)
         completed = {}
+        DrawUpstairs(screen, area, titleFont, labelFont, bodyFont, completed)
+        SaveIndoorPreview(screen, area + "-before")
         itemRects = IndoorActivityRects(area)
         for j = 0 to 2
             item = itemRects[j]
@@ -51,12 +54,15 @@ sub Main()
             CheckIndoor(clips.DoesExist("YOU DID IT!. " + UpstairsSuccess(action)), "activity result has bundled narration")
             for each frame in [0, 74, 149]
                 DrawUpstairs(screen, area, titleFont, labelFont, bodyFont, completed)
-                DrawUpstairsTask(screen, {area: area, action: action, frame: frame}, &hF05A9DFF, labelFont)
+                task = {area: area, action: action, frame: frame, duration: 240, storyIndex: 1}
+                DrawUpstairsTask(screen, task, &hF05A9DFF, labelFont)
+                if IsIndoorStoryAction(action) then DrawIndoorStoryCaption(screen, task, labelFont, bodyFont)
                 CheckIndoor(screen.commands.Count() > 0, "activity renders throughout its animation")
                 if frame = 74 then SaveIndoorPreview(screen, area + "-" + action)
                 screen.commands = []
             end for
             completed[area + ":" + action] = true
+            RecordIndoorResult(m.indoorWorld, area, action, 0)
         end for
         for each seat in UpstairsSeats(area)
             CheckIndoor(UpstairsActionAt(area, seat.walkX, seat.touchY) = seat.action, "seat is reachable independently of activities")
@@ -67,10 +73,48 @@ sub Main()
             screen.commands = []
         end for
         CheckIndoor(UpstairsActionAt(area, 640, 640) = "", "old floor text cannot activate anything")
-        CheckIndoor(HouseTravel(area, "hallway").area = "upstairs", "OK returns to hall")
+        CheckIndoor(UpstairsActionAt(area, 1210, 600) = "hallway", "open side doorway is a walk-through exit")
+        CheckIndoor(HouseTravel(area, "hallway").area = "upstairs", "door returns to hall")
+        landing = HouseTravel(area, "hallway")
+        CheckIndoor(UpstairsActionAt("upstairs", landing.x + 16, landing.y + 50) = "", "hall arrival does not bounce back into the room")
         DrawUpstairs(screen, area, titleFont, labelFont, bodyFont, completed)
         SaveIndoorPreview(screen, area)
     end for
+    for each key in [2, 3, 4, 5]
+        CheckIndoor(ShouldStandFromIndoorSeat(key, true, {action: "sit_chair1"}), "each arrow stands up from sitting")
+        CheckIndoor(ShouldStandFromIndoorSeat(key, true, {action: "cozyread"}), "moving stops a seated couch story")
+        CheckIndoor(ShouldStandFromIndoorSeat(key, true, {action: "story"}), "moving away stops book reading")
+        CheckIndoor(ShouldStandFromIndoorSeat(key, true, {action: "photos"}), "moving away stops photo narration")
+        CheckIndoor(not ShouldStandFromIndoorSeat(key, false, {action: "sit_chair1"}), "key release does not stand again")
+        CheckIndoor(not ShouldStandFromIndoorSeat(key, true, {action: "dressup"}), "standing logic does not cancel other activities")
+    end for
+    world = {}
+    outfit = RecordIndoorResult(world, "bedroom", "dressup", 0)
+    CheckIndoor(outfit = 1 and world["bedroom:dressup"], "dress-up selects a lasting new outfit")
+    CheckIndoor(RecordIndoorResult(world, "bedroom", "dressup", 1) = 2, "dress-up cycles to the blue outfit")
+    CheckIndoor(RecordIndoorResult(world, "bedroom", "dressup", 2) = 0, "dress-up can return to pink")
+    for each action in ["story", "cozyread", "photos"]
+        lines = IndoorStoryLines(action)
+        CheckIndoor(lines.Count() = 3, "reading activities have actual three-part narration")
+        for each words in lines
+            CheckIndoor(clips.DoesExist(words), "each story sentence has a recorded clip")
+        end for
+        task = {area: "bonusroom", action: action, frame: 0, storyIndex: 0}
+        voice = {speaking: true, Say: PreviewStorySay, words: []}
+        CheckIndoor(not UpdateIndoorStory(task, voice) and task.storyIndex = 0, "story waits until current sentence finishes")
+        voice.speaking = false
+        CheckIndoor(not UpdateIndoorStory(task, voice) and task.storyIndex = 1, "story advances to the next sentence")
+        voice.speaking = false
+        CheckIndoor(not UpdateIndoorStory(task, voice) and task.storyIndex = 2, "story plays the final sentence")
+        voice.speaking = false
+        CheckIndoor(UpdateIndoorStory(task, voice), "story completes after all sentences finish")
+    end for
+    for col = 0 to 3
+        m.characterSprites[col] = PreviewBitmap("images/wardrobe-walk-1.png", 128, 192, [col * 128, 0, 128, 192])
+    end for
+    DrawUpstairs(screen, "bedroom", titleFont, labelFont, bodyFont, {})
+    DrawGenevieve(screen, 960, 395, &hF05A9DFF, 0, 0)
+    SaveIndoorPreview(screen, "dressup-result")
     contact = {contact: ""}
     CheckIndoor(not ObserveIndoorContact(contact, "playroom", "dollhouse", false, false), "standing still does not activate an object on arrival")
     CheckIndoor(ObserveIndoorContact(contact, "playroom", "dollhouse", true, false), "walking into an item activates it")
@@ -91,7 +135,7 @@ sub Main()
     CheckIndoor(HouseTravel("upstairs", "stairsdown").area = "house", "OK goes downstairs")
     CheckIndoor(UpstairsActionAt("upstairs", 1145, 620) = "stairsdown", "real stairwell is reachable")
     CheckIndoor(not IsUpstairsArea("yard"), "yard navigation unchanged")
-    CheckIndoor(clips.DoesExist("Sit down and relax. Press OK or Back to stand up."), "sitting has bundled narration")
+    CheckIndoor(clips.DoesExist("Sit down and relax. Use an arrow button to stand up."), "sitting has bundled narration")
     CheckIndoor(clips.DoesExist(UpstairsPrompt("stairsup") + "."), "upward stair narration")
     CheckIndoor(clips.DoesExist(UpstairsPrompt("stairsdown") + "."), "downward stair narration")
     print "PASS: stairs, four doors, return routes, twelve activities, furniture seating, animation frames and narration"
@@ -133,3 +177,8 @@ end function
 function PreviewHeight()
     return m.height
 end function
+
+sub PreviewStorySay(words)
+    m.words.Push(words)
+    m.speaking = true
+end sub

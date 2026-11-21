@@ -24,13 +24,18 @@ end function
 
 function UpstairsReturn(area)
     if area = "upstairs" then return {area: "house", x: 100, y: 475}
+    areas = ["bedroom", "playroom", "bonusroom", "parentsroom"]
+    doors = [240, 505, 775, 1040]
+    for i = 0 to 3
+        if area = areas[i] then return {area: "upstairs", x: doors[i] - 16, y: 435}
+    end for
     return {area: "upstairs", x: 624, y: 530}
 end function
 
 function HouseTravel(area, action)
     if action = "stairsup" then return {area: "upstairs", x: 624, y: 530}
     if action = "stairsdown" or action = "hallway" then return UpstairsReturn(area)
-    return {area: Mid(action, 6), x: 1180, y: 600}
+    return {area: Mid(action, 6), x: 950, y: 550}
 end function
 
 function IndoorActivityRects(area)
@@ -50,6 +55,7 @@ function UpstairsActionAt(area, x, y)
         end for
         if PointInRect(x, y, 1040, 565, 210, 115) then return "stairsdown"
     else
+        if UpstairsRoom(area) <> invalid and PointInRect(x, y, 1160, 525, 110, 155) then return "hallway"
         for each seat in UpstairsSeats(area)
             if PointInRect(x, y, seat.walkX - 32, seat.touchY - 25, 64, 50) then return seat.action
         end for
@@ -85,9 +91,12 @@ function BeginIndoorInteraction(area, action, playerX, playerY, facing)
     if action = "stairsup" or action = "stairsdown" then duration = 100
     if IsSeatAction(action)
         duration = 2147483647
-        words = "Sit down and relax. Press OK or Back to stand up."
+        words = "Sit down and relax. Use an arrow button to stand up."
     end if
-    return {task: {area: area, action: action, frame: 0, duration: duration, x: playerX, y: playerY, facing: facing}, landing: invalid, words: words}
+    task = {area: area, action: action, frame: 0, duration: duration, x: playerX, y: playerY, facing: facing}
+    PrepareIndoorActivity(task)
+    if IsIndoorStoryAction(action) then words = IndoorStoryLines(action)[0]
+    return {task: task, landing: invalid, words: words}
 end function
 
 function UpstairsPrompt(action)
@@ -106,7 +115,7 @@ function UpstairsPrompt(action)
     if action = "room_parentsroom" then return "enter Mommy and Daddy's room"
     if action = "makebed" then return "make your cozy bed"
     if action = "story" then return "read a picture book"
-    if action = "dressup" then return "try on colorful bows"
+    if action = "dressup" then return "choose a pretty outfit"
     if action = "puzzle" then return "put together a rainbow puzzle"
     if action = "parentsbed" then return "help make Mommy and Daddy's bed"
     if action = "photos" then return "look at family pictures"
@@ -122,7 +131,7 @@ function UpstairsSuccess(action)
     if action = "treelights" then return "The Christmas tree is sparkling!"
     if action = "makebed" then return "Your bed is cozy and your pillows are fluffy!"
     if action = "story" then return "What a wonderful picture book!"
-    if action = "dressup" then return "You tried pink, purple, and golden bows!"
+    if action = "dressup" then return "Your new outfit looks lovely!"
     if action = "puzzle" then return "Every rainbow puzzle piece is in place!"
     if action = "parentsbed" then return "Thank you for helping Mommy and Daddy!"
     if action = "photos" then return "So many happy family memories!"
@@ -168,9 +177,12 @@ sub DrawUpstairs(screen, area, titleFont, labelFont, bodyFont, completed)
             if backdrop <> invalid then screen.DrawScaledObject(0, 0, 1280 / backdrop.GetWidth(), 720 / backdrop.GetHeight(), backdrop)
         end if
         DrawHeader(screen, title, titleFont, bodyFont)
-        exitLabel = "TO THE HALL"
+        DrawIndoorWorldState(screen, area)
+        if m.indoorExitDoor <> invalid
+            screen.DrawScaledObject(1130, 435, 150 / m.indoorExitDoor.GetWidth(), 275 / m.indoorExitDoor.GetHeight(), m.indoorExitDoor)
+        end if
     end if
-    screen.DrawText("Walk up to an item to play   |   Back: return", 38, 666, &h173E52FF, bodyFont)
+    screen.DrawText("Walk up to items to play   |   Walk through the open door to leave", 38, 666, &h173E52FF, bodyFont)
 end sub
 
 function RoomActivityLabel(action)
@@ -193,6 +205,8 @@ sub LoadUpstairsArtwork()
     m.loadedUpstairsArea = ""
     m.upstairsActivitySprites = []
     LoadIndoorSeatArtwork()
+    LoadIndoorWorldArtwork()
+    m.indoorWorld = {}
 end sub
 
 sub UpdateUpstairsArtwork(area)
@@ -200,16 +214,19 @@ sub UpdateUpstairsArtwork(area)
     m.upstairsActivitySprites = []
     m.indoorBedForeground = invalid
     m.indoorDrawingSteps = invalid
+    m.indoorTreeOn = invalid
+    m.indoorPuzzleDone = invalid
     m.upstairsBackdrops = {}
     m.loadedUpstairsArea = area
     uri = ""
     if area = "upstairs" then uri = "pkg:/images/upstairs-hall.jpg"
     if area = "bedroom" then uri = "pkg:/images/upstairs-bedroom.jpg"
     if area = "playroom" then uri = "pkg:/images/upstairs-playroom.jpg"
-    if area = "bonusroom" then uri = "pkg:/images/upstairs-bonusroom.jpg"
+    if area = "bonusroom" then uri = "pkg:/images/upstairs-bonusroom-ready.jpg"
     if area = "parentsroom" then uri = "pkg:/images/upstairs-parentsroom.jpg"
     if uri <> "" then m.upstairsBackdrops[area] = CreateObject("roBitmap", uri)
     LoadIndoorActivityArtwork(area)
+    LoadIndoorRoomResults(area)
 end sub
 
 function IsSeatAction(action)
@@ -293,7 +310,7 @@ sub DrawIndoorActionPopup(screen, task, font)
     if IsSeatAction(task.action)
         seat = FindIndoorSeat(task.area, task.action)
         if seat <> invalid then x = seat.x : y = seat.y - 120
-        text = "OK / Back: stand up"
+        text = "Move to stand up"
     end if
     if task.action = "stairsup" then x = 390 : y = 190 : text = "GOING UPSTAIRS"
     if task.action = "stairsdown" then x = 930 : y = 475 : text = "GOING DOWNSTAIRS"
@@ -303,6 +320,19 @@ sub DrawIndoorActionPopup(screen, task, font)
     screen.DrawRect(Int(x - 150), Int(y), 300, 46, &h173E52EE)
     CenterLabel(screen, text, Int(x), Int(y + 10), &hFFFFFFFF, font)
     if not IsSeatAction(task.action)
-        screen.DrawRect(Int(x - 140), Int(y + 39), Int(280 * task.frame / task.duration), 4, &hFFE06AFF)
+        progress = task.frame / task.duration
+        if IsIndoorStoryAction(task.action) and task.DoesExist("storyIndex") then progress = (task.storyIndex + 1) / 3
+        screen.DrawRect(Int(x - 140), Int(y + 39), Int(280 * progress), 4, &hFFE06AFF)
     end if
 end sub
+
+function IsSeatedIndoorTask(task)
+    if task = invalid then return false
+    return IsSeatAction(task.action) or task.action = "cozyread"
+end function
+
+function ShouldStandFromIndoorSeat(button, pressed, task)
+    if not pressed or task = invalid then return false
+    if not IsSeatedIndoorTask(task) and not IsIndoorStoryAction(task.action) then return false
+    return button = 0 or button = 6 or (button >= 2 and button <= 5)
+end function

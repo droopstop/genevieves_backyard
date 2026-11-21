@@ -13,6 +13,12 @@ def build_samples(destination=None):
     texts = json.loads((ROOT / 'tools/upstairs-narration-texts.json').read_text())
     output = ROOT / 'previews/upstairs-audio'
     output.mkdir(parents=True, exist_ok=True)
+    prior = output / 'catalogue.json'
+    if prior.exists():
+        for item in json.loads(prior.read_text()):
+            old = output / item['sample']
+            if old.is_file():
+                old.unlink()
     manifest = []
     for index, text in enumerate(texts, 1):
         digest = hashlib.sha256(text.encode()).hexdigest()[:16]

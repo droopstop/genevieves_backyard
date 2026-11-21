@@ -147,3 +147,11 @@ with the built-in OpenAI image generator. The existing character atlas and
 room backgrounds guided their storybook style, identity and interaction props.
 Prompts are in `tools/indoor-activity-art.json`; sprite bounds are in
 `tools/indoor-animation-bounds.json`.
+
+The persistent activity-result props, walk-through side doorway, wardrobe walking
+and sitting sprites, and unlit bonus-room scene were created with the built-in
+OpenAI image generator. Prompts are in `tools/indoor-results-art.json`. Original
+three-part stories and family-picture narration use the same offline Lessac voice.
+Whole-character runtime images for Pappy, Gigi, Mommy, Daddy, and Pops are scaled
+to multiple times their on-screen size to reduce Roku texture memory and installer
+storage while retaining their illustrated appearance and transparency.

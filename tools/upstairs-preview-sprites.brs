@@ -1,19 +1,29 @@
 sub InitializeIndoorPreviewSprites()
     m.houseBackdrop = PreviewBitmap("images/house-interior-wall-stairs.jpg", 1280, 720, invalid)
-    m.popsSprite = PreviewBitmap("images/pops-recliner.png", 1213, 1296, invalid)
+    m.popsSprite = PreviewBitmap("images/pops-recliner.png", 655, 700, invalid)
     m.houseStairs = PreviewBitmap("images/house-stairs.png", 520, 750, invalid)
     m.upstairsActivitySprites = []
+    m.indoorWorld = {}
+    m.indoorResultSprites = []
+    m.indoorOutfitIndex = 0
+    m.indoorExitDoor = PreviewBitmap("images/indoor-exit-door.png", 176, 352, invalid)
+    m.indoorTreeOn = PreviewBitmap("images/indoor-tree-lit.jpg", 388, 390, invalid)
+    m.indoorPuzzleDone = PreviewBitmap("images/indoor-puzzle-done.jpg", 200, 95, invalid)
+    for row = 0 to 2
+        for col = 0 to 3
+            m.indoorResultSprites.Push(PreviewBitmap("images/indoor-results.png", 128, 128, [col * 128, row * 128, 128, 128]))
+        end for
+    end for
     m.indoorSeatSprites = []
-    m.indoorSeatSprites.Push(PreviewBitmap("images/indoor-sitting.png", 164, 321, [54, 14, 164, 321]))
-    m.indoorSeatSprites.Push(PreviewBitmap("images/indoor-sitting.png", 173, 323, [299, 13, 173, 323]))
-    m.indoorSeatSprites.Push(PreviewBitmap("images/indoor-sitting.png", 174, 319, [551, 16, 174, 319]))
-    m.indoorSeatSprites.Push(PreviewBitmap("images/indoor-sitting.png", 161, 322, [803, 14, 161, 322]))
+    for col = 0 to 3
+        m.indoorSeatSprites.Push(PreviewBitmap("images/wardrobe-sit-0.png", 128, 192, [col * 128, 0, 128, 192]))
+    end for
     m.upstairsBackdrops = {}
     m.upstairsBackdrops["upstairs"] = PreviewBitmap("images/upstairs-hall.jpg", 1280, 720, invalid)
     m.upstairsDoorFont = {size: 12, GetOneLineWidth: TestWidth}
     m.upstairsBackdrops["bedroom"] = PreviewBitmap("images/upstairs-bedroom.jpg", 1280, 720, invalid)
     m.upstairsBackdrops["playroom"] = PreviewBitmap("images/upstairs-playroom.jpg", 1280, 720, invalid)
-    m.upstairsBackdrops["bonusroom"] = PreviewBitmap("images/upstairs-bonusroom.jpg", 1280, 720, invalid)
+    m.upstairsBackdrops["bonusroom"] = PreviewBitmap("images/upstairs-bonusroom-ready.jpg", 1280, 720, invalid)
     m.upstairsBackdrops["parentsroom"] = PreviewBitmap("images/upstairs-parentsroom.jpg", 1280, 720, invalid)
     m.heartSprite = PreviewBitmap("images/stitch-heart.png", 128, 128, invalid)
     m.characterSprites = []

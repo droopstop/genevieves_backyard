@@ -28,7 +28,7 @@ Genevieve climbs it automatically. The upstairs landing has the same illustrated
 storybook style as the rooms, with four real doors and a descending stairwell.
 Walk up to a door to enter its room. Walk to the stairwell to go downstairs.
 
-- **Genevieve's bedroom:** make her bed, read a picture book, and try colorful bows.
+- **Genevieve's bedroom:** make her bed, hear a picture-book story, and choose a lasting outfit.
 - **Genevieve's playroom:** play with the dollhouse, cook a pretend lunch, and draw on the whiteboard.
 - **Bonus room:** enjoy a couch story, finish a rainbow puzzle, and decorate the Christmas tree.
 - **Mommy and Daddy's room:** make their bed, look at family pictures, and arrange flowers.
@@ -36,12 +36,11 @@ Walk up to a door to enter its room. Walk to the stairwell to go downstairs.
 Walk right up to the actual item to start its activity. A small action popup
 appears by the item. There are no activity buttons or SIT text targets on the
 floor. Walk away and return to replay; remaining at an item does not restart it.
-Press **Back** to return from a room to the hall. Existing outdoor controls and
+Walk through the open doorway at the right edge of a room to return to the hall. Existing outdoor controls and
 family mission conversations continue to use their usual buttons.
 
 Walking up to a chair, couch cushion, bed edge, or bike seat makes Genevieve sit.
-Her hips rest on its seat surface and her legs hang over the edge. Press **OK**
-or **Back** to stand up. She will stay standing until she leaves and returns.
+Her hips rest on its seat surface and her legs hang over the edge. Press any arrow button to stand up and move. **OK** or **Back** also stands her up. She will stay standing until she leaves and returns.
 The living-room sofa below the window also supports sitting.
 
 Indoor activities use four painted character poses per activity with hand-held
@@ -49,6 +48,15 @@ props that match the object, rather than rectangle-based animation props. The
 whiteboard activity uses an illustrated step stool; bedding remains in front of
 her kneeling legs when she makes a bed. Only the current room and its animation
 atlas are loaded, keeping the Roku texture budget low.
+
+Every activity now produces a result that remains visible while exploring:
+folded blankets and pillows, dolls placed in the dollhouse, pretend food on the
+kitchen counter, a rainbow on the whiteboard, the completed wooden puzzle,
+illuminated and twinkling Christmas lights, a family photo, and arranged flowers.
+Dress-up cycles between pink, lavender, and blue outfits; walking and sitting
+use the chosen outfit. The picture book and couch tell original three-page
+stories aloud with captions. Family pictures have a three-part spoken memory.
+Moving away stops story or photo narration; moving from the couch also stands Genevieve up.
 
 All new introductions, activity instructions and results, staircase instructions,
 and sitting instructions have offline Lessac narration. Named MP3 samples are

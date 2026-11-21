@@ -97,12 +97,11 @@ sub Main()
             if type(message) = "roUniversalControlEvent"
                 button = message.GetKey()
                 pressed = message.IsPress()
-                if pressed and (button = 0 or button = 6) and activeTask <> invalid
-                    if IsSeatAction(activeTask.action)
-                        activeTask = invalid
-                        upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
-                        button = -1
-                    end if
+                if ShouldStandFromIndoorSeat(button, pressed, activeTask)
+                    activeTask = invalid
+                    missionVoice.Flush()
+                    upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
+                    if button = 0 or button = 6 then button = -1
                 end if
 
                 ' Back cancels an unfinished activity; OK cannot restart it mid-animation.
@@ -288,10 +287,15 @@ sub Main()
                         activeTask = {area: currentArea, action: currentAction, frame: 0, duration: 150}
                         if IsSeatAction(currentAction)
                             activeTask.duration = 2147483647
-                            missionVoice.Say("Sit down and relax. Press OK or Back to stand up.")
+                            missionVoice.Say("Sit down and relax. Use an arrow button to stand up.")
                         else if IsUpstairsArea(currentArea)
                             activeTask.duration = 240
-                            missionVoice.Say(UpstairsPrompt(currentAction) + ".")
+                            PrepareIndoorActivity(activeTask)
+                            if IsIndoorStoryAction(currentAction)
+                                missionVoice.Say(IndoorStoryLines(currentAction)[0])
+                            else
+                                missionVoice.Say(UpstairsPrompt(currentAction) + ".")
+                            end if
                         end if
                         actionDoneFrames = 0
                         upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
@@ -311,6 +315,9 @@ sub Main()
 
         if activeTask <> invalid
             activeTask.frame = activeTask.frame + 1
+            if IsIndoorStoryAction(activeTask.action)
+                if UpdateIndoorStory(activeTask, missionVoice) then activeTask.frame = activeTask.duration
+            end if
             if activeTask.action = "cow" and activeTask.frame = 24
                 backgroundMusic.DuckFor(2300)
                 backgroundMusic.Update(missionVoice.speaking)
@@ -323,6 +330,7 @@ sub Main()
                     playerX = landing.x : playerY = landing.y
                     missionVoice.Say(RoomWelcome(currentArea))
                 else
+                    CompleteIndoorActivity(activeTask.area, activeTask.action)
                     actionMessage = ActionSuccessMessage(activeTask.area, activeTask.action)
                     actionHeading = "YOU DID IT!"
                     completedActions[activeTask.area + ":" + activeTask.action] = true
@@ -580,6 +588,7 @@ sub Main()
         UpdateMissionPresentation(missionPresentation, missionHud, actionHeading, actionMessage, showActionBanner, missionCompleted, mommyElapsed, missionVoice)
 
         UpdateUpstairsArtwork(currentArea)
+        m.indoorFrame = spaceFrame
         m.renderTask = activeTask
         m.yardProjection = currentArea = "yard"
         if currentArea = "yard"
@@ -625,6 +634,7 @@ sub Main()
             DrawTaskAnimation(screen, activeTask, dressColor, labelFont)
             if IsAutomaticIndoorAction(activeTask.area, activeTask.action)
                 DrawIndoorActionPopup(screen, activeTask, labelFont)
+                if IsIndoorStoryAction(activeTask.action) then DrawIndoorStoryCaption(screen, activeTask, labelFont, bodyFont)
             else
                 screen.DrawRect(275, 82, 730, 52, &h173E52FF)
                 if IsSeatAction(activeTask.action)
@@ -693,7 +703,7 @@ sub Main()
         end if
         if currentArea <> "yard" then screen.DrawText("Play/Pause: twirl", 40, 691, &hFFF0C2FF, bodyFont)
         DrawMissionFireworks(screen, missionPresentation)
-        DrawMissionHud(screen, missionHud, labelFont, bodyFont)
+        if not IsUpstairsArea(currentArea) then DrawMissionHud(screen, missionHud, labelFont, bodyFont)
         screen.SwapBuffers()
         sleep(16)
     end while
