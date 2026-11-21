@@ -2,9 +2,26 @@
 from pathlib import Path
 import argparse
 import re
+import struct
 import zipfile
 
 ROOT = Path(__file__).resolve().parent
+
+
+def validate_menu_icons(manifest):
+    attributes = dict(line.split('=', 1) for line in manifest.splitlines()
+                      if '=' in line and not line.startswith('#'))
+    for key, expected in [('mm_icon_focus_hd', (290, 218)),
+                          ('mm_icon_focus_fhd', (540, 405)),
+                          ('mm_icon_side_hd', (290, 218))]:
+        uri = attributes.get(key, '')
+        if not uri.startswith('pkg:/images/'):
+            raise ValueError(f'{key} must reference a bundled menu icon')
+        image = (ROOT / uri[5:]).read_bytes()
+        if image[:8] != b'\x89PNG\r\n\x1a\n':
+            raise ValueError(f'{key} must reference a PNG image')
+        if struct.unpack('>II', image[16:24]) != expected:
+            raise ValueError(f'{key} must have dimensions {expected}')
 
 
 def package_game(destination, main_source=None):
@@ -17,6 +34,7 @@ def package_game(destination, main_source=None):
         for path in source_paths
     }
     manifest = (ROOT / 'manifest').read_text()
+    validate_menu_icons(manifest)
     references = set(re.findall(
         r'pkg:/([A-Za-z0-9_./-]+)',
         manifest + '\n' + '\n'.join(source_texts.values()),

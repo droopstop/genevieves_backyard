@@ -5,9 +5,14 @@ sub Main()
     screen.SetAlphaEnable(true)
     LoadAreaArtwork()
     LoadCharacterArtwork()
+    LoadStitchPhotoArtwork()
     LoadActivityPoses()
     LoadPlanetArtwork()
     LoadMommyArtwork()
+    LoadPappyArtwork()
+    LoadGigiArtwork()
+    LoadHouseArtwork()
+    LoadUpstairsArtwork()
     LoadYardDetailArtwork()
     LoadCowArtwork()
     LoadFarmArtwork()
@@ -39,6 +44,9 @@ sub Main()
     missionVoice = CreateGameNarrator(missionVoice, narrationPlayer, narrationPort)
     missionPresentation = CreateMissionPresentation()
     mommy = CreateMommy()
+    pappy = CreatePappy()
+    gigi = CreateGigi()
+    pops = CreatePops()
     mommyClock = CreateObject("roTimespan")
     mommyClock.Mark()
     mommyLastTick = 0
@@ -87,6 +95,13 @@ sub Main()
             if type(message) = "roUniversalControlEvent"
                 button = message.GetKey()
                 pressed = message.IsPress()
+                if pressed and (button = 0 or button = 6) and activeTask <> invalid
+                    if IsSeatAction(activeTask.action)
+                        activeTask = invalid
+                        upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
+                        button = -1
+                    end if
+                end if
 
                 ' Back cancels an unfinished activity; OK cannot restart it mid-animation.
                 if button = 0 and pressed
@@ -97,6 +112,18 @@ sub Main()
                 if button = 0 and pressed
                     if currentArea = "yard"
                         if not cancelledYardTask then running = false
+                    else if IsUpstairsArea(currentArea)
+                        landing = UpstairsReturn(currentArea)
+                        currentArea = landing.area
+                        playerX = landing.x : playerY = landing.y
+                        missionVoice.Say(RoomWelcome(currentArea))
+                        actionDoneFrames = 0
+                    else if currentArea = "house"
+                        currentArea = "yard"
+                        returnPosition = HouseReturnPosition()
+                        playerX = returnPosition.x
+                        playerY = returnPosition.y
+                        completedActions = CreateObject("roAssociativeArray")
                     else if IsPlanetArea(currentArea)
                         currentArea = "firepit"
                         playerX = 170
@@ -121,7 +148,19 @@ sub Main()
                     actionDoneFrames = 0
                     upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
                 else if button = 6 and pressed and activeTask = invalid
-                    if currentArea = "grove" and currentAction = "dig"
+                    if IsHouseTravelAction(currentArea, currentAction)
+                        if currentAction = "stairsup" or currentAction = "stairsdown"
+                            activeTask = {area: currentArea, action: currentAction, frame: 0, duration: 100}
+                            missionVoice.Say(UpstairsPrompt(currentAction) + ".")
+                        else
+                            landing = HouseTravel(currentArea, currentAction)
+                            currentArea = landing.area
+                            playerX = landing.x : playerY = landing.y
+                            missionVoice.Say(RoomWelcome(currentArea))
+                        end if
+                        actionDoneFrames = 0
+                        upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
+                    else if currentArea = "grove" and currentAction = "dig"
                         activeTask = {area: "grove", action: "dig", frame: 0, duration: 470, x: playerX, y: playerY, facing: playerFacing}
                         actionDoneFrames = 0
                         upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
@@ -168,6 +207,46 @@ sub Main()
                         playerX = 624
                         playerY = 535
                         upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
+                    else if currentArea = "house" and currentAction = "pops"
+                        if mission <> invalid and not missionCompleted
+                            reminder = BuildMissionHudText(mission, missionStepIndex, false)
+                            actionHeading = reminder.heading
+                            actionMessage = reminder.body
+                        else
+                            mission = GetPopsMission(pops.missionIndex)
+                            pops.missionIndex = (pops.missionIndex + 1) mod 6
+                            missionStepIndex = 0
+                            missionCompleted = false
+                            actionHeading = "POPS' MISSION!"
+                            actionMessage = mission.title
+                        end if
+                        actionDoneFrames = 210
+                    else if currentArea = "deck" and currentAction = "gigi"
+                        if mission <> invalid and not missionCompleted
+                            actionHeading = "GIGI SAYS: YOU CAN DO IT!"
+                            actionMessage = mission.steps[missionStepIndex].hint
+                        else
+                            mission = GetGigiMission(gigi.missionIndex)
+                            gigi.missionIndex = (gigi.missionIndex + 1) mod 4
+                            missionStepIndex = 0
+                            missionCompleted = false
+                            actionHeading = "GIGI'S MISSION!"
+                            actionMessage = mission.title
+                        end if
+                        actionDoneFrames = 210
+                    else if currentArea = "firepit" and currentAction = "pappy"
+                        if mission <> invalid and not missionCompleted
+                            actionHeading = "PAPPY SAYS: YOU CAN DO IT!"
+                            actionMessage = mission.steps[missionStepIndex].hint
+                        else
+                            mission = GetPappyMission(pappy.missionIndex)
+                            pappy.missionIndex = (pappy.missionIndex + 1) mod 6
+                            missionStepIndex = 0
+                            missionCompleted = false
+                            actionHeading = "PAPPY'S MISSION!"
+                            actionMessage = mission.title
+                        end if
+                        actionDoneFrames = 210
                     else if currentArea = "firepit" and currentAction = "daddy"
                         replacingMission = mission <> invalid
                         if replacingMission
@@ -204,6 +283,13 @@ sub Main()
                         upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
                     else if currentArea <> "yard" and not IsPlanetArea(currentArea) and currentAction <> ""
                         activeTask = {area: currentArea, action: currentAction, frame: 0, duration: 150}
+                        if IsSeatAction(currentAction)
+                            activeTask.duration = 2147483647
+                            missionVoice.Say("Sit down and relax. Press OK or Back to stand up.")
+                        else if IsUpstairsArea(currentArea)
+                            activeTask.duration = 240
+                            missionVoice.Say(UpstairsPrompt(currentAction) + ".")
+                        end if
                         actionDoneFrames = 0
                         upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
                     else
@@ -228,26 +314,33 @@ sub Main()
                 PlayCowMoo(cowMoo)
             end if
             if activeTask.frame >= activeTask.duration
-                actionMessage = ActionSuccessMessage(activeTask.area, activeTask.action)
-                actionHeading = "YOU DID IT!"
-                completedActions[activeTask.area + ":" + activeTask.action] = true
-                if mission <> invalid and missionCompleted = false
-                    stepInfo = mission.steps[missionStepIndex]
-                    if stepInfo.area = activeTask.area and stepInfo.action = activeTask.action
-                        if missionStepIndex = mission.steps.Count() - 1
-                            missionCompleted = true
-                            actionHeading = "MISSION COMPLETE!"
-                            actionMessage = mission.title
-                        else
-                            missionStepIndex = missionStepIndex + 1
-                            actionHeading = "STEP COMPLETE!"
-                            actionMessage = "Next: " + mission.steps[missionStepIndex].hint
+                if activeTask.action = "stairsup" or activeTask.action = "stairsdown"
+                    landing = HouseTravel(activeTask.area, activeTask.action)
+                    currentArea = landing.area
+                    playerX = landing.x : playerY = landing.y
+                    missionVoice.Say(RoomWelcome(currentArea))
+                else
+                    actionMessage = ActionSuccessMessage(activeTask.area, activeTask.action)
+                    actionHeading = "YOU DID IT!"
+                    completedActions[activeTask.area + ":" + activeTask.action] = true
+                    if mission <> invalid and missionCompleted = false
+                        stepInfo = mission.steps[missionStepIndex]
+                        if stepInfo.area = activeTask.area and stepInfo.action = activeTask.action
+                            if missionStepIndex = mission.steps.Count() - 1
+                                missionCompleted = true
+                                actionHeading = "MISSION COMPLETE!"
+                                actionMessage = mission.title
+                            else
+                                missionStepIndex = missionStepIndex + 1
+                                actionHeading = "STEP COMPLETE!"
+                                actionMessage = "Next: " + mission.steps[missionStepIndex].hint
+                            end if
                         end if
                     end if
+                    if activeTask.action = "stitch" then stitchLoveFrames = 90
+                    if activeTask.action = "cow" then FinishCowPet(activeTask.cow)
+                    actionDoneFrames = 180
                 end if
-                if activeTask.action = "stitch" then stitchLoveFrames = 90
-                if activeTask.action = "cow" then FinishCowPet(activeTask.cow)
-                actionDoneFrames = 180
                 activeTask = invalid
                 upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
             end if
@@ -267,13 +360,15 @@ sub Main()
         if playerX < minimumX then playerX = minimumX
         if playerX > 1220 then playerX = 1220
         if playerY < 92 then playerY = 92
+        if currentArea = "house" and playerY < 360 then playerY = 360
+        if UpstairsRoom(currentArea) <> invalid and playerY < 385 then playerY = 385
         if playerY > 665 then playerY = 665
 
         playerFacing = FacingForMovement(playerX - oldPlayerX, playerY - oldPlayerY, playerFacing)
         centerX = playerX + 16
         centerY = playerY + 20
 
-        if currentArea <> "yard" and PointInRect(centerX, centerY, 555, 625, 170, 75)
+        if currentArea <> "yard" and not IsUpstairsArea(currentArea) and PointInRect(centerX, centerY, 555, 625, 170, 75)
             if IsPlanetArea(currentArea)
                 currentArea = "firepit"
                 playerX = 170
@@ -294,6 +389,10 @@ sub Main()
                 else if currentArea = "deck"
                     playerX = 900
                     playerY = 350
+                else if currentArea = "house"
+                    returnPosition = HouseReturnPosition()
+                    playerX = returnPosition.x
+                    playerY = returnPosition.y
                 end if
                 currentArea = "yard"
             end if
@@ -319,7 +418,14 @@ sub Main()
                 nearbyPlace = "playset"
             else if PointInRect(centerX, centerY, 875, 250, 190, 235)
                 nearbyPlace = "deck"
+            else if IsHouseEntrance(centerX, centerY)
+                nearbyPlace = "house"
             end if
+        else if currentArea = "house"
+            if PointInRect(centerX, centerY, 80, 345, 260, 215) then currentAction = "stairsup"
+            if PointInRect(centerX, centerY, 28, 560, 50, 50) then currentAction = "sit_livingsofa"
+        else if IsUpstairsArea(currentArea)
+            currentAction = UpstairsActionAt(currentArea, centerX, centerY)
         else if currentArea = "garden"
             if PointInRect(centerX, centerY, 90, 135, 310, 430)
                 currentAction = "water"
@@ -413,6 +519,12 @@ sub Main()
         mommyLastTick = mommyTick
         if mommyElapsed > 250 then mommyElapsed = 250
         UpdateMommy(mommy, currentArea, mommyElapsed, centerX, centerY, activeTask <> invalid)
+        UpdatePappy(pappy, currentArea, mommyElapsed, centerX, centerY, activeTask <> invalid)
+        if currentArea = "firepit" and pappy.nearby then currentAction = "pappy"
+        UpdateGigi(gigi, currentArea, centerX, centerY, activeTask <> invalid)
+        if currentArea = "deck" and gigi.nearby then currentAction = "gigi"
+        UpdatePops(pops, currentArea, centerX, centerY, activeTask <> invalid)
+        if currentArea = "house" and pops.nearby then currentAction = "pops"
         nearbyCow = UpdateCows(cows, currentArea, mommyElapsed, centerX, centerY, activeTask)
 
         stitchNearby = false
@@ -463,6 +575,10 @@ sub Main()
             DrawGrove(screen, titleFont, labelFont, promptFont, bodyFont, completedActions)
         else if currentArea = "deck"
             DrawDeck(screen, titleFont, labelFont, promptFont, bodyFont, completedActions)
+        else if IsUpstairsArea(currentArea)
+            DrawUpstairs(screen, currentArea, titleFont, labelFont, bodyFont, completedActions)
+        else if currentArea = "house"
+            DrawHouse(screen, titleFont, labelFont, promptFont, bodyFont)
         else if IsPlanetArea(currentArea)
             DrawPlanet(screen, currentArea, titleFont, labelFont, promptFont, bodyFont, planetItems, planetCollected, spaceFrame)
         else
@@ -472,6 +588,12 @@ sub Main()
         if currentArea = "yard"
             DrawCows(screen, cows)
             DrawMommy(screen, mommy, labelFont)
+        else if currentArea = "firepit"
+            DrawPappy(screen, pappy, mission, missionCompleted, labelFont, bodyFont)
+        else if currentArea = "deck"
+            DrawGigi(screen, gigi, mission, missionCompleted, labelFont, bodyFont)
+        else if currentArea = "house"
+            DrawPops(screen, pops, mission, missionCompleted, labelFont, bodyFont)
         end if
         drawWalkingStitch = currentArea = "yard"
         if activeTask <> invalid
@@ -485,9 +607,13 @@ sub Main()
         if activeTask <> invalid
             DrawTaskAnimation(screen, activeTask, dressColor, labelFont)
             screen.DrawRect(275, 82, 730, 52, &h173E52FF)
-            CenterLabel(screen, ActionPrompt(activeTask.area, activeTask.action) + "...", 640, 88, &hFFFFFFFF, labelFont)
-            screen.DrawRect(460, 119, 360, 5, &h617E87FF)
-            screen.DrawRect(460, 119, Int(360 * activeTask.frame / activeTask.duration), 5, &hFFE06AFF)
+            if IsSeatAction(activeTask.action)
+                CenterLabel(screen, "Press OK or Back to stand up", 640, 94, &hFFFFFFFF, labelFont)
+            else
+                CenterLabel(screen, ActionPrompt(activeTask.area, activeTask.action) + "...", 640, 88, &hFFFFFFFF, labelFont)
+                screen.DrawRect(460, 119, 360, 5, &h617E87FF)
+                screen.DrawRect(460, 119, Int(360 * activeTask.frame / activeTask.duration), 5, &hFFE06AFF)
+            end if
         else
             DrawGenevieve(screen, playerX, playerY, dressColor, walkBob, playerFacing)
         end if
@@ -522,11 +648,18 @@ sub Main()
             else if currentArea = "yard" and nearbyPlace = "deck"
                 screen.DrawRect(414, 82, 452, 52, &h173E52EE)
                 screen.DrawText("Press OK to go onto the deck", 449, 94, &hFFFFFFFF, promptFont)
+            else if currentArea = "yard" and nearbyPlace = "house"
+                screen.DrawRect(350, 82, 580, 52, &h173E52EE)
+                CenterLabel(screen, "Press OK to go inside and visit Pops", 640, 94, &hFFFFFFFF, promptFont)
             end if
         end if
         if currentArea <> "yard" and currentAction <> "" and actionDoneFrames = 0 and activeTask = invalid
             screen.DrawRect(275, 82, 730, 52, &h173E52EE)
-            CenterLabel(screen, "Press OK to " + ActionPrompt(currentArea, currentAction), 640, 94, &hFFFFFFFF, promptFont)
+            promptText = ActionPrompt(currentArea, currentAction)
+            if currentAction = "pappy" then promptText = PappyPrompt(mission, missionCompleted)
+            if currentAction = "gigi" then promptText = GigiPrompt(mission, missionCompleted)
+            if currentAction = "pops" then promptText = PopsPrompt(mission, missionCompleted)
+            CenterLabel(screen, "Press OK to " + promptText, 640, 94, &hFFFFFFFF, promptFont)
         end if
         if actionDoneFrames > 0 and activeTask = invalid
             screen.DrawRect(275, 76, 730, 68, &h2E7D32F2)
@@ -546,6 +679,8 @@ sub Main()
 end sub
 
 function ActionPrompt(area, action)
+    indoorPrompt = UpstairsPrompt(action)
+    if indoorPrompt <> "" then return indoorPrompt
     if action = "dig" then return "carry the shovel and fill the bucket"
     if action = "bubbles" then return "blow big bubbles"
     if action = "hippityhop" then return "bounce around the yard"
@@ -575,10 +710,15 @@ function ActionPrompt(area, action)
     if action = "rings" then return "collect 10 sparkling rings"
     if action = "bluecrystal" then return "collect 10 blue crystals"
     if action = "daddy" then return "visit Daddy"
+    if action = "pappy" then return "visit Pappy"
+    if action = "gigi" then return "visit Gigi"
+    if action = "pops" then return "visit Pops"
     return "do the activity"
 end function
 
 function ActionSuccessMessage(area, action)
+    indoorResult = UpstairsSuccess(action)
+    if indoorResult <> "" then return indoorResult
     if action = "dig" then return "The bucket is full and the shovel is put away!"
     if action = "bubbles" then return "Wow! Those bubbles were enormous!"
     if action = "hippityhop" then return "Hippity hop! What a bouncy ride!"
@@ -747,7 +887,7 @@ end function
 
 function BuildMissionHudText(mission, missionStepIndex, missionCompleted)
     if mission = invalid
-        return {heading: "MISSION", body: "Visit Daddy or Mommy for a mission"}
+        return {heading: "MISSION", body: "Visit family for missions. Pops is inside!"}
     else if missionCompleted
         return {heading: "MISSION COMPLETE!", body: "Return to " + mission.giver + " for another mission"}
     end if
@@ -756,9 +896,25 @@ function BuildMissionHudText(mission, missionStepIndex, missionCompleted)
 end function
 
 sub DrawMissionHud(screen, hud, labelFont, bodyFont)
-    screen.DrawRect(785, 626, 455, 70, &h173E52EE)
-    screen.DrawText(hud.heading, 805, 634, &hFFE06AFF, labelFont)
-    screen.DrawText(hud.body, 805, 662, &hFFFFFFFF, bodyFont)
+    screen.DrawRect(785, 618, 455, 88, &h173E52EE)
+    screen.DrawText(hud.heading, 805, 626, &hFFE06AFF, labelFont)
+    firstLine = ""
+    secondLine = ""
+    for each word in hud.body.Tokenize(" ")
+        if secondLine <> ""
+            secondLine = secondLine + " " + word
+        else
+            candidate = word
+            if firstLine <> "" then candidate = firstLine + " " + word
+            if bodyFont.GetOneLineWidth(candidate, 1280) <= 415
+                firstLine = candidate
+            else
+                secondLine = word
+            end if
+        end if
+    end for
+    screen.DrawText(firstLine, 805, 652, &hFFFFFFFF, bodyFont)
+    if secondLine <> "" then screen.DrawText(secondLine, 805, 676, &hFFFFFFFF, bodyFont)
 end sub
 
 sub DrawDone(screen, completedActions, key, x, y, labelFont)
@@ -876,6 +1032,8 @@ sub LoadAreaArtwork()
         sprite = CreateObject("roRegion", atlas, rect[0], rect[1], rect[2], rect[3])
         m.areaSprites.Push(sprite)
     end for
+    daddySprite = CreateObject("roBitmap", "pkg:/images/daddy-photo.png")
+    if daddySprite <> invalid then m.areaSprites[17] = daddySprite
 end sub
 
 sub DrawAreaObject(screen, index, x, y, width, height)
@@ -1109,6 +1267,11 @@ sub DrawGenevieve(screen, playerX, playerY, dressColor, walkBob, playerFacing)
     screen.DrawRect(playerX + 6, playerY - 17, 20, 6, &h6A3F2AFF)
     screen.DrawRect(playerX + 4, playerY - 11, 5, 15, &h6A3F2AFF)
     screen.DrawRect(playerX + 23, playerY - 11, 5, 15, &h6A3F2AFF)
+    ' Keep the hair bow even when the illustrated sprite is unavailable.
+    screen.DrawRect(playerX + 2, playerY - 20, 7, 6, &hF05A9DFF)
+    screen.DrawRect(playerX + 10, playerY - 19, 7, 6, &hF05A9DFF)
+    screen.DrawRect(playerX + 8, playerY - 18, 4, 4, &hFF8FC5FF)
+    screen.DrawRect(playerX + 4, playerY - 14, 3, 5, &hF05A9DFF)
     screen.DrawRect(playerX + 11, playerY - 7, 3, 3, &h173E52FF)
     screen.DrawRect(playerX + 19, playerY - 7, 3, 3, &h173E52FF)
     screen.DrawRect(playerX + 8, playerY + 4, 16, 17, dressColor)
@@ -1160,7 +1323,9 @@ sub DrawTaskAnimation(screen, task, dressColor, labelFont)
     frame = task.frame
     wave = Sin(frame * 0.09)
     bob = Int(wave * 4)
-    if action = "twirl"
+    if (IsUpstairsArea(task.area) and action <> "twirl") or IsSeatAction(action) or action = "stairsup"
+        DrawUpstairsTask(screen, task, dressColor, labelFont)
+    else if action = "twirl"
         DrawTwirl(screen, task, dressColor)
     else if action = "dig"
         DrawGardenDigActivity(screen, task, dressColor)
@@ -1365,7 +1530,7 @@ sub DrawSpaceTreasure(screen, planet, item, frame, ground)
 end sub
 
 sub LoadMommyArtwork()
-    m.mommySprite = CreateObject("roBitmap", "pkg:/images/mommy.png")
+    m.mommySprite = CreateObject("roBitmap", "pkg:/images/mommy-photo.png")
 end sub
 
 function CreateMommy()
@@ -1504,8 +1669,7 @@ function SpeakMissionText(voice, words)
     if not voice.IsEnabled() then return false
     ' A changed instruction replaces stale speech rather than queuing behind it.
     voice.Flush()
-    voice.Say(words)
-    return true
+    return voice.Say(words) <> 0
 end function
 
 sub UpdateMissionPresentation(state, hud, bannerHeading, bannerBody, showBanner, completed, elapsedMs, voice)

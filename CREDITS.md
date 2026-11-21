@@ -26,15 +26,45 @@ as references. Prompts recorded in `tools/garden-dig-art.md`.
 
 The illustrated yard object atlas (`images/yard-objects.png`) was generated for Genevieve's Backyard using OpenAI image generation. Sprite regions are defined in `LoadAreaArtwork`.
 
+Daddy's seated cigar sprite (`images/daddy-cigar.png`): generated using OpenAI
+ImageGen with the original Daddy atlas illustration as reference. Replaces
+the coffee mug with a cigar and a small wisp of smoke.
+
+Daddy's updated character (`images/daddy-photo.png`): generated using OpenAI
+ImageGen from the user's supplied photograph and the seated cigar sprite.
+The photograph is used as an appearance reference; it is not bundled in the game.
+
+House interior (`images/house-interior.png`) and Pops in his recliner
+(`images/pops-recliner.png`): generated using OpenAI ImageGen for this game.
+Pops is Genevieve's great-grandfather. His mission narration uses the same
+Piper Lessac voice and settings as the other family missions.
+
 Original Genevieve and Stitch reference artwork (`images/genevieve-stitch.png`) was generated using OpenAI image generation. It is retained in the source project; the game package uses the directional atlas.
 
 Directional character atlas (`images/characters-directions.png`): four views each of Genevieve and Stitch, generated from the original character artwork with OpenAI image generation.
+
+Photo-based Stitch directional sprites (`images/stitch-photo-directions.png`):
+generated using OpenAI ImageGen from the user's supplied dog photograph.
+Front, back, left, and right views depict her short brown brindle coat, darker
+ears, lean legs, and gray muzzle. These replace only Stitch's four sprite
+regions, including the views used while she is petted. Genevieve's original
+directional sprites are preserved. The photograph is not bundled in the game.
 
 Stitch affection heart (`images/stitch-heart.png`): transparent illustrated sprite generated using OpenAI image generation.
 
 Planet jewel atlas (`images/planet-jewels.png`): ruby crystals, jeweled gold ring, blue crystals, and sparkle sprites generated using OpenAI image generation.
 
 Mommy character (`images/mommy.png`): transparent illustrated character sprite generated using OpenAI image generation.
+
+Photo-based Mommy/Mama character (`images/mommy-photo.png`): generated with
+OpenAI ImageGen from the user's supplied reference photograph, matching her
+brown wavy hair, coral top, and geometric-pattern trousers. The photograph is
+not included in the game package.
+
+Photo-based Gigi character (`images/gigi-photo.png`): generated with OpenAI
+ImageGen from the user's supplied reference photograph, matching her dark
+auburn hair, mauve cowl-neck sweater with diagonal buttons, and olive trousers.
+The photograph and other people in it are not included in the game package.
 
 Yard detail atlas (`images/yard-details.png`): cottage, deck, weed bed, and pulled weed illustrations generated using OpenAI image generation.
 
@@ -73,3 +103,33 @@ Table setting and s'more activity poses (`images/table-smores-poses.png`):
 generated with OpenAI image generation using Genevieve's activity atlas as a
 reference. The poses include a plate, low step stool, roasting skewer,
 marshmallow and finished s'more. Final prompts are in `tools/table-smores-art.md`.
+# Pappy addition
+
+Gigi character artwork generated with OpenAI ImageGen for this game.
+Gigi character behavior and mission text added for Genevieve's grandma.
+Gigi's hair corrected to brownish red (auburn) using OpenAI ImageGen.
+Gigi's name is synthesized as "Gee Gee" while retaining "Gigi" in game text.
+
+Gigi and Pappy mission instructions, reminders, and completion messages use
+the same Piper `en_US-lessac-high` voice and generation settings as the original
+game narration. Exact speech text is exported by `tools/export-narration.brs`.
+
+Pappy character artwork generated with OpenAI ImageGen for this game.
+Pappy character behavior and mission text added for Genevieve's grandpa.
+
+
+# Upstairs expansion
+
+The four `images/upstairs-*.png` room backgrounds and transparent
+`images/house-stairs.png` were created with the built-in OpenAI image generation
+tool, using the user's room photographs as furnishing/color references and
+`house-interior.png` as the storybook style and layout reference. The bedroom's
+ballerina was corrected to exactly two arms. Prompts and asset notes are in
+`tools/upstairs-art.json`. The user's original room photographs are not included
+in the repository or installation package.
+
+All 33 new room, activity, staircase and sitting speech clips use the same
+Piper `en_US-lessac-high` voice and synthesis settings as the existing game.
+Text is exported by `tools/export-upstairs-narration.brs` and recorded in
+`tools/upstairs-narration-texts.json`. Named MP3 samples can be rebuilt with
+`tools/build_upstairs_audio_samples.py`.

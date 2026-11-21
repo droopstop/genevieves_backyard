@@ -10,6 +10,8 @@ from piper import PiperVoice, SynthesisConfig
 
 ROOT=Path(__file__).resolve().parents[1]
 def spoken_text(text):
+    # Keep the displayed name Gigi; the narrator should say two soft G syllables.
+    text=re.sub(r'\bGigi\b', 'Gee Gee', text, flags=re.IGNORECASE)
     text=re.sub(r'Step (\d+)/(\d+):',r'Step \1 of \2.',text)
     text=text.replace('MISSION: ', '').replace('MISSION. ', '')
     text=text.replace('!.', '!').replace('Play/Pause','play pause')
@@ -20,12 +22,13 @@ def spoken_text(text):
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('model');parser.add_argument('catalogue')
+    parser.add_argument('--regenerate-name', help='Regenerate existing clips containing this name, case-insensitively')
     args=parser.parse_args()
     texts=json.loads(Path(args.catalogue).read_text())
     # New assignments and completion banners duplicate the HUD, which is narrated first.
-    texts=[t for t in texts if not t.startswith(('NEW MISSION!',"MOMMY'S MISSION!"))
+    texts=sorted(set(t for t in texts if not t.startswith(('NEW MISSION!',"MOMMY'S MISSION!", "PAPPY'S MISSION!", "GIGI'S MISSION!", "POPS' MISSION!"))
            and not t.startswith('STEP COMPLETE!. Next: ')
-           and not (t.startswith('MISSION COMPLETE!') and not ('Return to ' in t or 'Fly home to ' in t))]
+           and not (t.startswith('MISSION COMPLETE!') and not ('Return to ' in t or 'Fly home to ' in t))))
     target=ROOT/'audio/narration';target.mkdir(parents=True,exist_ok=True)
     voice=PiperVoice.load(args.model)
     ffmpeg=imageio_ffmpeg.get_ffmpeg_exe()
@@ -33,7 +36,8 @@ def main():
     for i,text in enumerate(texts):
         key=hashlib.sha256(text.encode()).hexdigest()[:16]
         dest=target/(key+'.mp3')
-        if not dest.exists():
+        regenerate_name = args.regenerate_name and re.search(r'\b' + re.escape(args.regenerate_name) + r'\b', text, re.IGNORECASE)
+        if not dest.exists() or regenerate_name:
             wav=Path('/tmp/backyard-narration.wav')
             with wave.open(str(wav),'wb') as output:
                 voice.synthesize_wav(spoken_text(text),output,syn_config=SynthesisConfig(length_scale=1.03))
