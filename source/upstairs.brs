@@ -211,6 +211,7 @@ end sub
 
 sub UpdateUpstairsArtwork(area)
     if m.loadedUpstairsArea = area then return
+    ResetIndoorRoomOnExit(m.indoorWorld, m.loadedUpstairsArea, area)
     m.upstairsActivitySprites = []
     m.indoorBedForeground = invalid
     m.indoorDrawingSteps = invalid

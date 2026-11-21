@@ -138,6 +138,30 @@ sub Main()
     CheckIndoor(clips.DoesExist("Sit down and relax. Use an arrow button to stand up."), "sitting has bundled narration")
     CheckIndoor(clips.DoesExist(UpstairsPrompt("stairsup") + "."), "upward stair narration")
     CheckIndoor(clips.DoesExist(UpstairsPrompt("stairsdown") + "."), "downward stair narration")
+    resetWorld = {"playroom:drawboard": true, "bonusroom:treelights": true}
+    ResetIndoorRoomOnExit(resetWorld, "playroom", "playroom")
+    CheckIndoor(resetWorld["playroom:drawboard"], "activity results remain while staying in the room")
+    ResetIndoorRoomOnExit(resetWorld, "playroom", "upstairs")
+    CheckIndoor(not resetWorld.DoesExist("playroom:drawboard"), "walking out clears the drawing")
+    CheckIndoor(resetWorld["bonusroom:treelights"], "only the room being left is reset")
+    for each roomArea in rooms
+        resetWorld = {}
+        for each action in UpstairsRoom(roomArea).stations
+            resetWorld[roomArea + ":" + action] = true
+        end for
+        ResetIndoorRoomOnExit(resetWorld, roomArea, "upstairs")
+        CheckIndoor(resetWorld.Count() = 0, "every activity in each room resets on exit")
+        for each action in UpstairsRoom(roomArea).stations
+            CheckIndoor(RecordIndoorResult(resetWorld, roomArea, action, 0) >= 0, "activities remain playable on the next visit")
+        end for
+        ResetIndoorRoomOnExit(resetWorld, roomArea, "house")
+        CheckIndoor(resetWorld.Count() = 0, "any route out of the room resets its activities")
+    end for
+    ResetIndoorRoomOnExit(m.indoorWorld, "bonusroom", "upstairs")
+    PreviewRoomActivitySprites("bonusroom")
+    DrawUpstairs(screen, "bonusroom", titleFont, labelFont, bodyFont, {})
+    SaveIndoorPreview(screen, "bonusroom-reset")
+    print "PASS: room activities reset on exit and replay on return"
     print "PASS: stairs, four doors, return routes, twelve activities, furniture seating, animation frames and narration"
 end sub
 

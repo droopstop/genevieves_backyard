@@ -47,6 +47,19 @@ sub CompleteIndoorActivity(area, action)
     if nextIndex <> index then SetIndoorWardrobeOutfit(nextIndex)
 end sub
 
+sub ResetIndoorRoomOnExit(world, previousArea, nextArea)
+    if previousArea = nextArea or world = invalid then return
+    if UpstairsRoom(previousArea) = invalid then return
+    prefix = previousArea + ":"
+    removeKeys = []
+    for each key in world
+        if Left(key, Len(prefix)) = prefix then removeKeys.Push(key)
+    end for
+    for each key in removeKeys
+        world.Delete(key)
+    end for
+end sub
+
 function IndoorResultReady(area, action)
     if m.indoorWorld = invalid then return false
     key = area + ":" + action

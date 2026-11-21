@@ -49,7 +49,9 @@ whiteboard activity uses an illustrated step stool; bedding remains in front of
 her kneeling legs when she makes a bed. Only the current room and its animation
 atlas are loaded, keeping the Roku texture budget low.
 
-Every activity now produces a result that remains visible while exploring:
+Every activity produces a result that stays visible until Genevieve leaves that room.
+Leaving through the doorway or using Back resets the room, so every return
+starts with fresh activities:
 folded blankets and pillows, dolls placed in the dollhouse, pretend food on the
 kitchen counter, a rainbow on the whiteboard, the completed wooden puzzle,
 illuminated and twinkling Christmas lights, a family photo, and arranged flowers.
