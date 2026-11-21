@@ -26,6 +26,7 @@ sub Main()
     labelFont = fontRegistry.GetDefaultFont(20, true, false)
     promptFont = fontRegistry.GetDefaultFont(27, true, false)
     bodyFont = fontRegistry.GetDefaultFont(18, false, false)
+    m.upstairsDoorFont = fontRegistry.GetDefaultFont(12, true, false)
 
     cowMoo = CreateObject("roAudioResource", "pkg:/audio/cow-moo.wav")
     cows = CreateCows()
@@ -68,6 +69,7 @@ sub Main()
     stitchLoveFrames = 0
     nearbyPlace = ""
     currentAction = ""
+    indoorContact = {contact: ""}
     actionMessage = ""
     actionHeading = "YOU DID IT!"
     activeTask = invalid
@@ -148,6 +150,7 @@ sub Main()
                     actionDoneFrames = 0
                     upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
                 else if button = 6 and pressed and activeTask = invalid
+                    if IsAutomaticIndoorAction(currentArea, currentAction) then indoorContact.contact = currentArea + ":" + currentAction
                     if IsHouseTravelAction(currentArea, currentAction)
                         if currentAction = "stairsup" or currentAction = "stairsdown"
                             activeTask = {area: currentArea, action: currentAction, frame: 0, duration: 100}
@@ -360,8 +363,8 @@ sub Main()
         if playerX < minimumX then playerX = minimumX
         if playerX > 1220 then playerX = 1220
         if playerY < 92 then playerY = 92
-        if currentArea = "house" and playerY < 360 then playerY = 360
-        if UpstairsRoom(currentArea) <> invalid and playerY < 385 then playerY = 385
+        if currentArea = "house" and playerY < 280 then playerY = 280
+        if UpstairsRoom(currentArea) <> invalid and playerY < 280 then playerY = 280
         if playerY > 665 then playerY = 665
 
         playerFacing = FacingForMovement(playerX - oldPlayerX, playerY - oldPlayerY, playerFacing)
@@ -422,9 +425,9 @@ sub Main()
                 nearbyPlace = "house"
             end if
         else if currentArea = "house"
-            currentAction = HouseActionAt(centerX, centerY)
+            currentAction = HouseActionAt(centerX, playerY + 50)
         else if IsUpstairsArea(currentArea)
-            currentAction = UpstairsActionAt(currentArea, centerX, centerY)
+            currentAction = UpstairsActionAt(currentArea, centerX, playerY + 50)
         else if currentArea = "garden"
             if PointInRect(centerX, centerY, 90, 135, 310, 430)
                 currentAction = "water"
@@ -525,6 +528,20 @@ sub Main()
         UpdatePops(pops, currentArea, centerX, centerY, activeTask <> invalid)
         if currentArea = "house" and pops.nearby then currentAction = "pops"
         nearbyCow = UpdateCows(cows, currentArea, mommyElapsed, centerX, centerY, activeTask)
+        walking = playerX <> oldPlayerX or playerY <> oldPlayerY
+        if ObserveIndoorContact(indoorContact, currentArea, currentAction, walking, activeTask <> invalid)
+            interaction = BeginIndoorInteraction(currentArea, currentAction, playerX, playerY, playerFacing)
+            activeTask = interaction.task
+            if interaction.landing <> invalid
+                currentArea = interaction.landing.area
+                playerX = interaction.landing.x : playerY = interaction.landing.y
+                currentAction = ""
+            end if
+            missionVoice.Say(interaction.words)
+            actionDoneFrames = 0
+            upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
+        end if
+
 
         stitchNearby = false
         if currentArea = "yard"
@@ -606,13 +623,17 @@ sub Main()
         if upHeld or downHeld or leftHeld or rightHeld then walkBob = Int(Sin(spaceFrame * 0.45) * 2)
         if activeTask <> invalid
             DrawTaskAnimation(screen, activeTask, dressColor, labelFont)
-            screen.DrawRect(275, 82, 730, 52, &h173E52FF)
-            if IsSeatAction(activeTask.action)
-                CenterLabel(screen, "Press OK or Back to stand up", 640, 94, &hFFFFFFFF, labelFont)
+            if IsAutomaticIndoorAction(activeTask.area, activeTask.action)
+                DrawIndoorActionPopup(screen, activeTask, labelFont)
             else
-                CenterLabel(screen, ActionPrompt(activeTask.area, activeTask.action) + "...", 640, 88, &hFFFFFFFF, labelFont)
-                screen.DrawRect(460, 119, 360, 5, &h617E87FF)
-                screen.DrawRect(460, 119, Int(360 * activeTask.frame / activeTask.duration), 5, &hFFE06AFF)
+                screen.DrawRect(275, 82, 730, 52, &h173E52FF)
+                if IsSeatAction(activeTask.action)
+                    CenterLabel(screen, "Press OK or Back to stand up", 640, 94, &hFFFFFFFF, labelFont)
+                else
+                    CenterLabel(screen, ActionPrompt(activeTask.area, activeTask.action) + "...", 640, 88, &hFFFFFFFF, labelFont)
+                    screen.DrawRect(460, 119, 360, 5, &h617E87FF)
+                    screen.DrawRect(460, 119, Int(360 * activeTask.frame / activeTask.duration), 5, &hFFE06AFF)
+                end if
             end if
         else
             DrawGenevieve(screen, playerX, playerY, dressColor, walkBob, playerFacing)
@@ -653,7 +674,7 @@ sub Main()
                 CenterLabel(screen, "Press OK to go inside and visit Pops", 640, 94, &hFFFFFFFF, promptFont)
             end if
         end if
-        if currentArea <> "yard" and currentAction <> "" and actionDoneFrames = 0 and activeTask = invalid
+        if currentArea <> "yard" and currentAction <> "" and not IsAutomaticIndoorAction(currentArea, currentAction) and actionDoneFrames = 0 and activeTask = invalid
             screen.DrawRect(275, 82, 730, 52, &h173E52EE)
             promptText = ActionPrompt(currentArea, currentAction)
             if currentAction = "pappy" then promptText = PappyPrompt(mission, missionCompleted)

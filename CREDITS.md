@@ -139,3 +139,11 @@ built-in OpenAI image generator to integrate the staircase into the far-left
 wall and place the sofa below the window. Navigation, climbing, and sitting
 positions match the new architecture. The original living room art is retained
 as a source reference.
+
+The illustrated upstairs landing (`images/upstairs-hall.jpg`), four indoor
+activity atlases (`images/indoor-activity-*.png`), seated directional sprite
+sheet (`images/indoor-sitting.png`), and drawing step stool were generated
+with the built-in OpenAI image generator. The existing character atlas and
+room backgrounds guided their storybook style, identity and interaction props.
+Prompts are in `tools/indoor-activity-art.json`; sprite bounds are in
+`tools/indoor-animation-bounds.json`.

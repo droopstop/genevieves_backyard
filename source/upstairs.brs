@@ -33,25 +33,61 @@ function HouseTravel(area, action)
     return {area: Mid(action, 6), x: 1180, y: 600}
 end function
 
+function IndoorActivityRects(area)
+    if area = "bedroom" then return [{action: "makebed", x: 40, y: 405, w: 125, h: 80}, {action: "story", x: 550, y: 360, w: 150, h: 100}, {action: "dressup", x: 880, y: 380, w: 200, h: 95}]
+    if area = "playroom" then return [{action: "dollhouse", x: 35, y: 390, w: 185, h: 100}, {action: "playkitchen", x: 265, y: 365, w: 145, h: 100}, {action: "drawboard", x: 820, y: 320, w: 200, h: 105}]
+    if area = "bonusroom" then return [{action: "cozyread", x: 190, y: 445, w: 155, h: 45}, {action: "puzzle", x: 590, y: 345, w: 180, h: 90}, {action: "treelights", x: 970, y: 355, w: 210, h: 110}]
+    if area = "parentsroom" then return [{action: "parentsbed", x: 20, y: 425, w: 140, h: 80}, {action: "photos", x: 535, y: 365, w: 195, h: 90}, {action: "vase", x: 1020, y: 300, w: 95, h: 90}]
+    return []
+end function
+
 function UpstairsActionAt(area, x, y)
     if area = "upstairs"
         rooms = ["bedroom", "playroom", "bonusroom", "parentsroom"]
+        doorX = [240, 505, 775, 1040]
         for i = 0 to 3
-            if PointInRect(x, y, 60 + i * 300, 210, 255, 285) then return "room_" + rooms[i]
+            if PointInRect(x, y, doorX[i] - 75, 325, 150, 100) then return "room_" + rooms[i]
         end for
-        if PointInRect(x, y, 510, 575, 260, 105) then return "stairsdown"
+        if PointInRect(x, y, 1040, 565, 210, 115) then return "stairsdown"
     else
-        room = UpstairsRoom(area)
-        if room = invalid then return ""
-        for i = 0 to 2
-            if PointInRect(x, y, room.targets[i] - 100, 365, 200, 165) then return room.stations[i]
-        end for
         for each seat in UpstairsSeats(area)
-            if PointInRect(x, y, seat.walkX - 45, 535, 90, 55) then return seat.action
+            if PointInRect(x, y, seat.walkX - 32, seat.touchY - 25, 64, 50) then return seat.action
         end for
-        if PointInRect(x, y, 510, 610, 260, 70) then return "hallway"
+        for each item in IndoorActivityRects(area)
+            if PointInRect(x, y, item.x, item.y, item.w, item.h) then return item.action
+        end for
     end if
     return ""
+end function
+
+function IsAutomaticIndoorAction(area, action)
+    return (area = "house" or IsUpstairsArea(area)) and action <> "" and action <> "pops" and action <> "twirl"
+end function
+
+function ObserveIndoorContact(state, area, action, moving, busy)
+    if not IsAutomaticIndoorAction(area, action)
+        state.contact = ""
+        return false
+    end if
+    key = area + ":" + action
+    if state.contact = key or busy or not moving then return false
+    state.contact = key
+    return true
+end function
+
+function BeginIndoorInteraction(area, action, playerX, playerY, facing)
+    if IsHouseTravelAction(area, action) and action <> "stairsup" and action <> "stairsdown"
+        landing = HouseTravel(area, action)
+        return {task: invalid, landing: landing, words: RoomWelcome(landing.area)}
+    end if
+    duration = 240
+    words = UpstairsPrompt(action) + "."
+    if action = "stairsup" or action = "stairsdown" then duration = 100
+    if IsSeatAction(action)
+        duration = 2147483647
+        words = "Sit down and relax. Press OK or Back to stand up."
+    end if
+    return {task: {area: area, action: action, frame: 0, duration: duration, x: playerX, y: playerY, facing: facing}, landing: invalid, words: words}
 end function
 
 function UpstairsPrompt(action)
@@ -95,12 +131,7 @@ function UpstairsSuccess(action)
 end function
 
 sub DrawHouseStairs(screen, labelFont, bodyFont)
-    ' The stairs are part of the far-left wall in the house backdrop.
-    screen.DrawRect(10, 420, 200, 40, &h173E52DD)
-    CenterLabel(screen, "UPSTAIRS", 110, 429, &hFFE06AFF, labelFont)
-    CenterLabel(screen, "Walk here + press OK", 110, 469, &h173E52FF, bodyFont)
-    screen.DrawRect(425, 445, 70, 28, &h173E52BB)
-    CenterLabel(screen, "SIT", 460, 449, &hFFE06AFF, bodyFont)
+    ' The architectural stairs are already painted into the room; no text target.
 end sub
 
 sub DrawUpstairs(screen, area, titleFont, labelFont, bodyFont, completed)
@@ -119,47 +150,27 @@ sub DrawUpstairs(screen, area, titleFont, labelFont, bodyFont, completed)
     screen.DrawRect(0, 317, 1280, 14, &hFFF8E9FF)
     DrawHeader(screen, title, titleFont, bodyFont)
     if area = "upstairs"
-        names = ["GENEVIEVE", "PLAYROOM", "BONUS ROOM", "MOMMY + DADDY"]
-        subtitles = ["Bedroom", "Play + draw", "Stories + Christmas", "Bedroom"]
-        colors = [&hCB5794FF, &h3F9B86FF, &h7775B5FF, &hAB805AFF]
+        if m.upstairsBackdrops <> invalid
+            backdrop = m.upstairsBackdrops[area]
+            if backdrop <> invalid then screen.DrawScaledObject(0, 0, 1280 / backdrop.GetWidth(), 720 / backdrop.GetHeight(), backdrop)
+        end if
+        DrawHeader(screen, title, titleFont, bodyFont)
+        names = ["GENEVIEVE", "PLAYROOM", "BONUS", "MOM+DAD"]
+        doorX = [240, 505, 775, 1040]
+        font = m.upstairsDoorFont
+        if font = invalid then font = bodyFont
         for i = 0 to 3
-            x = 60 + i * 300
-            screen.DrawRect(x, 177, 255, 324, &hFFF8E9FF)
-            screen.DrawRect(x + 13, 191, 229, 297, colors[i])
-            screen.DrawRect(x + 33, 252, 189, 172, &hFFFFFF24)
-            screen.DrawRect(x + 201, 362, 12, 12, &hFFE06AFF)
-            screen.DrawRect(x - 3, 192, 261, 48, &h173E52FF)
-            CenterLabel(screen, names[i], x + 127, 204, &hFFFFFFFF, labelFont)
-            CenterLabel(screen, subtitles[i], x + 127, 439, &hFFFFFFFF, bodyFont)
+            CenterLabel(screen, names[i], doorX[i], 149, &h6E4C2DFF, font)
         end for
-        screen.DrawRect(470, 515, 340, 45, &hF7E5CFFF)
-        CenterLabel(screen, "Choose a door and press OK", 640, 524, &h173E52FF, bodyFont)
-        exitLabel = "DOWNSTAIRS"
     else
         if m.upstairsBackdrops <> invalid
             backdrop = m.upstairsBackdrops[area]
             if backdrop <> invalid then screen.DrawScaledObject(0, 0, 1280 / backdrop.GetWidth(), 720 / backdrop.GetHeight(), backdrop)
         end if
         DrawHeader(screen, title, titleFont, bodyFont)
-        for i = 0 to 2
-            action = room.stations[i]
-            x = room.targets[i]
-            screen.DrawRect(x - 99, 493, 198, 34, &h173E52DD)
-            CenterLabel(screen, RoomActivityLabel(action), x, 499, &hFFFFFFFF, bodyFont)
-            if completed.DoesExist(area + ":" + action)
-                CenterLabel(screen, "DONE!", x, 473, &hFFE06AFF, bodyFont)
-            end if
-        end for
-        for each seat in UpstairsSeats(area)
-            screen.DrawRect(seat.walkX - 35, 548, 70, 28, &h173E52BB)
-            CenterLabel(screen, "SIT", seat.walkX, 552, &hFFE06AFF, bodyFont)
-        end for
         exitLabel = "TO THE HALL"
     end if
-    screen.DrawRect(510, 610, 260, 65, &h173E52FF)
-    screen.DrawRect(520, 620, 240, 40, &hFFE06AFF)
-    CenterLabel(screen, exitLabel, 640, 625, &h173E52FF, labelFont)
-    screen.DrawText("Back: return   |   Walk to an activity + OK", 38, 666, &h173E52FF, bodyFont)
+    screen.DrawText("Walk up to an item to play   |   Back: return", 38, 666, &h173E52FF, bodyFont)
 end sub
 
 function RoomActivityLabel(action)
@@ -180,19 +191,25 @@ sub LoadUpstairsArtwork()
     ' Keep room backdrops out of the startup texture budget on smaller Roku TVs.
     m.upstairsBackdrops = {}
     m.loadedUpstairsArea = ""
-    m.houseStairs = CreateObject("roBitmap", "pkg:/images/house-stairs.png")
+    m.upstairsActivitySprites = []
+    LoadIndoorSeatArtwork()
 end sub
 
 sub UpdateUpstairsArtwork(area)
     if m.loadedUpstairsArea = area then return
+    m.upstairsActivitySprites = []
+    m.indoorBedForeground = invalid
+    m.indoorDrawingSteps = invalid
     m.upstairsBackdrops = {}
     m.loadedUpstairsArea = area
     uri = ""
+    if area = "upstairs" then uri = "pkg:/images/upstairs-hall.jpg"
     if area = "bedroom" then uri = "pkg:/images/upstairs-bedroom.jpg"
     if area = "playroom" then uri = "pkg:/images/upstairs-playroom.jpg"
     if area = "bonusroom" then uri = "pkg:/images/upstairs-bonusroom.jpg"
     if area = "parentsroom" then uri = "pkg:/images/upstairs-parentsroom.jpg"
     if uri <> "" then m.upstairsBackdrops[area] = CreateObject("roBitmap", uri)
+    LoadIndoorActivityArtwork(area)
 end sub
 
 function IsSeatAction(action)
@@ -200,11 +217,11 @@ function IsSeatAction(action)
 end function
 
 function UpstairsSeats(area)
-    if area = "bedroom" then return [{action: "sit_childbed", walkX: 165, x: 165, y: 392}]
-    if area = "playroom" then return [{action: "sit_chair1", walkX: 535, x: 535, y: 425}, {action: "sit_chair2", walkX: 635, x: 635, y: 425}]
-    if area = "bonusroom" then return [{action: "sit_sofa1", walkX: 105, x: 125, y: 350}, {action: "sit_sofa2", walkX: 210, x: 220, y: 335}, {action: "sit_sofa3", walkX: 315, x: 315, y: 324}, {action: "sit_sofa4", walkX: 420, x: 420, y: 320}]
-    if area = "parentsroom" then return [{action: "sit_parentbed", walkX: 170, x: 170, y: 393}, {action: "sit_bike", walkX: 1150, x: 1140, y: 370}]
-    if area = "house" then return [{action: "sit_livingsofa", walkX: 460, x: 460, y: 296}]
+    if area = "bedroom" then return [{action: "sit_childbed", walkX: 230, touchY: 455, x: 260, y: 372, pose: 0}]
+    if area = "playroom" then return [{action: "sit_chair1", walkX: 535, touchY: 450, x: 535, y: 447, pose: 0}, {action: "sit_chair2", walkX: 635, touchY: 450, x: 635, y: 447, pose: 0}]
+    if area = "bonusroom" then return [{action: "sit_sofa1", walkX: 105, touchY: 405, x: 125, y: 390, pose: 0}, {action: "sit_sofa2", walkX: 210, touchY: 390, x: 220, y: 365, pose: 0}, {action: "sit_sofa3", walkX: 315, touchY: 379, x: 315, y: 350, pose: 0}, {action: "sit_sofa4", walkX: 420, touchY: 375, x: 420, y: 345, pose: 0}]
+    if area = "parentsroom" then return [{action: "sit_parentbed", walkX: 255, touchY: 465, x: 335, y: 365, pose: 0}, {action: "sit_bike", walkX: 1150, touchY: 440, x: 1135, y: 350, pose: 1}]
+    if area = "house" then return [{action: "sit_livingsofa", walkX: 460, touchY: 410, x: 460, y: 285, pose: 0}]
     return []
 end function
 
@@ -226,18 +243,27 @@ function RoomWelcome(area)
 end function
 
 sub DrawIndoorSitting(screen, seat, frame, dressColor)
-    if m.activityPoses <> invalid and m.activityPoses.Count() > 6
-        DrawActivityPose(screen, 6, seat.x, seat.y, 82)
+    pose = 0
+    if seat.DoesExist("pose") then pose = seat.pose
+    if m.indoorSeatSprites <> invalid and m.indoorSeatSprites.Count() = 4
+        sprite = m.indoorSeatSprites[pose]
+        height = 92
+        scale = height / sprite.GetHeight()
+        hipX = 0.5
+        if pose = 1 then hipX = 0.70
+        if pose = 2 then hipX = 0.30
+        if pose = 3 then hipX = 0.58
+        ' Anchor the bottom of the hips to the cushion; legs remain in front.
+        screen.DrawScaledObject(Int(seat.x - sprite.GetWidth() * scale * hipX), Int(seat.y - height * 0.70), scale, scale, sprite)
     else
-        DrawGenevieve(screen, seat.x - 16, seat.y - 20, dressColor, 0, 0)
+        DrawGenevieve(screen, seat.x - 16, seat.y - 48, dressColor, 0, 0)
     end if
 end sub
 
 sub DrawStairClimb(screen, task, dressColor)
     progress = task.frame / task.duration
     if task.action = "stairsdown"
-        if m.houseStairs <> invalid then screen.DrawScaledObject(510, 300, 260 / m.houseStairs.GetWidth(), 300 / m.houseStairs.GetHeight(), m.houseStairs)
-        DrawGenevieve(screen, 624, 340 + progress * 205, dressColor, Int(Sin(task.frame * 0.5) * 3), 0)
+        DrawGenevieve(screen, 1110 + progress * 45, 520 + progress * 120, dressColor, Int(Sin(task.frame * 0.5) * 3), 0)
     else
         DrawGenevieve(screen, 80 + progress * 110, 365 - progress * 300, dressColor, Int(Sin(task.frame * 0.5) * 3), 1)
     end if
@@ -253,94 +279,30 @@ sub DrawUpstairsTask(screen, task, dressColor, labelFont)
         DrawStairClimb(screen, task, dressColor)
         return
     end if
-    room = UpstairsRoom(task.area)
-    if room = invalid then return
-    slot = 0
-    for i = 0 to 2
-        if room.stations[i] = task.action then slot = i
+    DrawIndoorActivityFrame(screen, task, dressColor)
+end sub
+
+sub DrawIndoorActionPopup(screen, task, font)
+    x = 640 : y = 160
+    text = RoomActivityLabel(task.action)
+    for each item in IndoorActivityRects(task.area)
+        if item.action = task.action
+            x = item.x + item.w / 2 : y = item.y - 160
+        end if
     end for
-    x = room.targets[slot]
-    frame = task.frame
-    if task.DoesExist("duration") then frame = Int(149 * task.frame / task.duration)
-    bob = Int(Sin(frame * 0.11) * 3)
-    action = task.action
-    if action = "cozyread"
-        DrawIndoorSitting(screen, {x: 220, y: 335}, frame, dressColor)
-    else
-        pose = 0
-        if frame mod 40 > 20 then pose = 1
-        if action = "story" or action = "photos" then pose = 10
-        if action = "dressup" then pose = 0
-        if action = "vase" then pose = 2
-        if action = "drawboard" then pose = 10
-        activityY = 450 + bob
-        if action = "drawboard"
-            screen.DrawRect(x - 42, 362, 60, 10, &hAF7E5FFF)
-            screen.DrawRect(x - 36, 372, 7, 40, &hAF7E5FFF)
-            screen.DrawRect(x + 4, 372, 7, 40, &hAF7E5FFF)
-            activityY = 320 + bob
-        end if
-        if m.activityPoses <> invalid and m.activityPoses.Count() > pose
-            DrawActivityPose(screen, pose, x - 20, activityY, 88)
-        else
-            DrawGenevieve(screen, x - 36, 432, dressColor, bob, 1)
-        end if
+    if IsSeatAction(task.action)
+        seat = FindIndoorSeat(task.area, task.action)
+        if seat <> invalid then x = seat.x : y = seat.y - 120
+        text = "OK / Back: stand up"
     end if
-    if action = "makebed" or action = "parentsbed"
-        ' A small animated folded blanket and pillow remain local to the real bed.
-        color = &hAEDBE9FF
-        if action = "parentsbed" then color = &hBA3F35FF
-        screen.DrawRect(x + 15, 404 - Int(frame / 25), 48, 14, color)
-        screen.DrawRect(x + 25, 390 - Int(frame / 25), 32, 12, &hFFF5DFFF)
-    else if action = "story" or action = "cozyread" or action = "photos"
-        bx = x - 25 : by = 413
-        if action = "cozyread" then bx = 205 : by = 325
-        screen.DrawRect(bx - 19, by, 40, 25, &hFFF5DFFF)
-        screen.DrawRect(bx, by, 2, 25, &hB38561FF)
-        screen.DrawRect(bx + 5, by + 5, 11, 12, &h9DBFDBFF)
-    else if action = "dressup"
-        colors = [&hF47FA9FF, &hB299DEFF, &hFFD365FF]
-        color = colors[Int(frame / 35) mod 3]
-        screen.DrawRect(x - 38, 405 + bob, 15, 11, color)
-        screen.DrawRect(x - 18, 405 + bob, 15, 11, color)
-    else if action = "drawboard"
-        ' Paint the rainbow directly onto the photographed room's whiteboard.
-        colors = [&hEF767AFF, &hF3AD61FF, &hF3D771FF, &h82BF91FF, &h80BCE3FF, &hB69DD3FF]
-        for band = 0 to 5
-            for stepIndex = 0 to Int(frame * 24 / 149)
-                angle = 3.14159 + stepIndex * 3.14159 / 24
-                r = 82 - band * 9
-                dx = 916 + Cos(angle) * r
-                dy = 254 + Sin(angle) * r
-                screen.DrawRect(Int(dx), Int(dy), 10, 10, colors[band])
-            end for
-        end for
-    else if action = "dollhouse"
-        DrawPetHeart(screen, 145, 280 - (frame mod 65), 23)
-    else if action = "playkitchen"
-        screen.DrawRect(348, 375, 32, 14, &hE8BD73FF)
-        for steam = 0 to 2
-            sy = 370 - ((frame + steam * 13) mod 35)
-            screen.DrawRect(352 + steam * 9, sy, 3, 7, &hFFFFEEBB)
-        end for
-    else if action = "puzzle"
-        colors = [&hF47FA9FF, &hFFD365FF, &h7CBCE5FF, &h9AD69CFF, &hB299DEFF]
-        for j = 0 to Int(frame / 15)
-            screen.DrawRect(632 + (j mod 5) * 17, 337 + Int(j / 5) * 12, 15, 10, colors[j mod 5])
-        end for
-    else if action = "treelights"
-        for j = 0 to 11
-            dx = 1070 + Sin(j * 2.4) * (20 + j * 5)
-            dy = 120 + j * 23
-            size = 12 + Int(Sin(frame * 0.14 + j) * 5)
-            DrawPlanetSprite(screen, 3, dx, dy, size, size)
-        end for
-    else if action = "vase"
-        for j = 0 to Int(frame / 30)
-            dx = 1077 + (j - 2) * 9
-            dy = 303 + (j mod 2) * 9
-            DrawTaskStroke(screen, 1085, 328, dx, dy, &h6C9D6BFF, 2)
-            screen.DrawRect(dx - 3, dy - 3, 9, 9, &hF1AFB0FF)
-        end for
+    if task.action = "stairsup" then x = 390 : y = 190 : text = "GOING UPSTAIRS"
+    if task.action = "stairsdown" then x = 930 : y = 475 : text = "GOING DOWNSTAIRS"
+    if x < 155 then x = 155
+    if x > 1125 then x = 1125
+    if y < 145 then y = 145
+    screen.DrawRect(Int(x - 150), Int(y), 300, 46, &h173E52EE)
+    CenterLabel(screen, text, Int(x), Int(y + 10), &hFFFFFFFF, font)
+    if not IsSeatAction(task.action)
+        screen.DrawRect(Int(x - 140), Int(y + 39), Int(280 * task.frame / task.duration), 4, &hFFE06AFF)
     end if
 end sub

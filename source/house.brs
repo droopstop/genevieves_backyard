@@ -76,7 +76,7 @@ function GetPopsMission(index)
 end function
 
 function HouseActionAt(x, y)
-    if PointInRect(x, y, 20, 350, 190, 160) then return "stairsup"
-    if PointInRect(x, y, 330, 370, 300, 130) then return "sit_livingsofa"
+    if PointInRect(x, y, 20, 330, 190, 85) then return "stairsup"
+    if PointInRect(x, y, 330, 365, 300, 90) then return "sit_livingsofa"
     return ""
 end function

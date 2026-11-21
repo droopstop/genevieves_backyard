@@ -23,35 +23,39 @@ He remains seated at the firepit with his cigar.
 
 ## Upstairs rooms
 
-Inside the house, walk to the staircase built into the far-left wall and press **OK**. Choose
-one of the four colored doors upstairs and press **OK**:
+Walk up to the staircase built into the far-left wall of Pops' living room.
+Genevieve climbs it automatically. The upstairs landing has the same illustrated
+storybook style as the rooms, with four real doors and a descending stairwell.
+Walk up to a door to enter its room. Walk to the stairwell to go downstairs.
 
 - **Genevieve's bedroom:** make her bed, read a picture book, and try colorful bows.
-- **Genevieve's playroom:** play with the dollhouse, cook a pretend lunch, and draw a rainbow on the whiteboard.
-- **Bonus room:** read a cozy couch story, finish a rainbow puzzle, and make the Christmas tree sparkle.
-- **Mommy and Daddy's bedroom:** help make their bed, enjoy family pictures, and arrange flowers.
+- **Genevieve's playroom:** play with the dollhouse, cook a pretend lunch, and draw on the whiteboard.
+- **Bonus room:** enjoy a couch story, finish a rainbow puzzle, and decorate the Christmas tree.
+- **Mommy and Daddy's room:** make their bed, look at family pictures, and arrange flowers.
 
-The four rooms use artwork modeled after the supplied room photos in the same
-storybook style and wide layout as Pops' living room. The staircase is visible,
-and Genevieve walks up or down its steps during floor changes.
+Walk right up to the actual item to start its activity. A small action popup
+appears by the item. There are no activity buttons or SIT text targets on the
+floor. Walk away and return to replay; remaining at an item does not restart it.
+Press **Back** to return from a room to the hall. Existing outdoor controls and
+family mission conversations continue to use their usual buttons.
 
-Walk near a labeled activity and press **OK** to play its animation. Activities
-can be repeated; a green DONE badge marks those completed during the visit.
-Press **Back** or use **TO THE HALL** to leave a room, then use **DOWNSTAIRS**
-to return to Pops. Existing outdoor missions continue while exploring upstairs.
+Walking up to a chair, couch cushion, bed edge, or bike seat makes Genevieve sit.
+Her hips rest on its seat surface and her legs hang over the edge. Press **OK**
+or **Back** to stand up. She will stay standing until she leaves and returns.
+The living-room sofa below the window also supports sitting.
 
-Walk onto a **SIT** marker and press **OK** to sit on a bed, either playroom
-chair, any of the four couch seats, or the stationary bike seat. She stays
-seated until you press **OK** or **Back** to stand up; standing preserves her
-room and walking position. The downstairs sofa below the window also has a sitting spot.
+Indoor activities use four painted character poses per activity with hand-held
+props that match the object, rather than rectangle-based animation props. The
+whiteboard activity uses an illustrated step stool; bedding remains in front of
+her kneeling legs when she makes a bed. Only the current room and its animation
+atlas are loaded, keeping the Roku texture budget low.
 
-All new room introductions, activity instructions and results, staircase
-instructions, and sitting instructions have offline Lessac narration. Individual
-MP3 samples are in `previews/upstairs-audio/`.
+All new introductions, activity instructions and results, staircase instructions,
+and sitting instructions have offline Lessac narration. Named MP3 samples are
+in `previews/upstairs-audio/`.
 
-The menu artwork is included at Roku's required HD (290 x 218) and FHD
-(540 x 405) sizes, with an HD side icon reference. Install this updated ZIP
-to apply the menu artwork and the upstairs expansion.
+Menu artwork is packaged at the required HD (290 x 218) and FHD (540 x 405)
+sizes with an HD side icon reference.
 
 ## Pappy's visits
 

@@ -2,7 +2,15 @@ sub InitializeIndoorPreviewSprites()
     m.houseBackdrop = PreviewBitmap("images/house-interior-wall-stairs.jpg", 1280, 720, invalid)
     m.popsSprite = PreviewBitmap("images/pops-recliner.png", 1213, 1296, invalid)
     m.houseStairs = PreviewBitmap("images/house-stairs.png", 520, 750, invalid)
+    m.upstairsActivitySprites = []
+    m.indoorSeatSprites = []
+    m.indoorSeatSprites.Push(PreviewBitmap("images/indoor-sitting.png", 164, 321, [54, 14, 164, 321]))
+    m.indoorSeatSprites.Push(PreviewBitmap("images/indoor-sitting.png", 173, 323, [299, 13, 173, 323]))
+    m.indoorSeatSprites.Push(PreviewBitmap("images/indoor-sitting.png", 174, 319, [551, 16, 174, 319]))
+    m.indoorSeatSprites.Push(PreviewBitmap("images/indoor-sitting.png", 161, 322, [803, 14, 161, 322]))
     m.upstairsBackdrops = {}
+    m.upstairsBackdrops["upstairs"] = PreviewBitmap("images/upstairs-hall.jpg", 1280, 720, invalid)
+    m.upstairsDoorFont = {size: 12, GetOneLineWidth: TestWidth}
     m.upstairsBackdrops["bedroom"] = PreviewBitmap("images/upstairs-bedroom.jpg", 1280, 720, invalid)
     m.upstairsBackdrops["playroom"] = PreviewBitmap("images/upstairs-playroom.jpg", 1280, 720, invalid)
     m.upstairsBackdrops["bonusroom"] = PreviewBitmap("images/upstairs-bonusroom.jpg", 1280, 720, invalid)
@@ -35,4 +43,69 @@ sub InitializeIndoorPreviewSprites()
     m.planetSprites.Push(PreviewBitmap("images/planet-jewels.png", 128, 128, [128, 0, 128, 128]))
     m.planetSprites.Push(PreviewBitmap("images/planet-jewels.png", 128, 128, [0, 128, 128, 128]))
     m.planetSprites.Push(PreviewBitmap("images/planet-jewels.png", 128, 128, [128, 128, 128, 128]))
+end sub
+
+sub PreviewRoomActivitySprites(area)
+    m.upstairsActivitySprites = []
+    m.indoorBedForeground = invalid
+    m.indoorDrawingSteps = invalid
+    if area = "bedroom" then m.indoorBedForeground = PreviewBitmap("images/upstairs-bedroom.jpg", 315, 125, [0, 380, 315, 125])
+    if area = "parentsroom" then m.indoorBedForeground = PreviewBitmap("images/upstairs-parentsroom.jpg", 390, 150, [0, 385, 390, 150])
+    if area = "playroom" then m.indoorDrawingSteps = PreviewBitmap("images/indoor-drawing-steps.png", 192, 185, invalid)
+    if area = "bedroom"
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bedroom.png", 244, 244, [6, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bedroom.png", 244, 244, [262, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bedroom.png", 244, 244, [518, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bedroom.png", 244, 244, [774, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bedroom.png", 244, 244, [6, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bedroom.png", 244, 244, [262, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bedroom.png", 244, 244, [518, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bedroom.png", 244, 244, [774, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bedroom.png", 244, 244, [6, 518, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bedroom.png", 244, 244, [262, 518, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bedroom.png", 244, 244, [518, 518, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bedroom.png", 244, 244, [774, 518, 244, 244]))
+    end if
+    if area = "playroom"
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-playroom.png", 244, 244, [6, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-playroom.png", 244, 244, [262, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-playroom.png", 244, 244, [518, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-playroom.png", 244, 244, [774, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-playroom.png", 244, 244, [6, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-playroom.png", 244, 244, [262, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-playroom.png", 244, 244, [518, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-playroom.png", 244, 244, [774, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-playroom.png", 244, 186, [6, 518, 244, 186]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-playroom.png", 244, 186, [262, 518, 244, 186]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-playroom.png", 244, 186, [518, 518, 244, 186]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-playroom.png", 244, 186, [774, 518, 244, 186]))
+    end if
+    if area = "bonusroom"
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bonusroom.png", 244, 244, [6, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bonusroom.png", 244, 244, [262, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bonusroom.png", 244, 244, [518, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bonusroom.png", 244, 244, [774, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bonusroom.png", 244, 244, [6, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bonusroom.png", 244, 244, [262, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bonusroom.png", 244, 244, [518, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bonusroom.png", 244, 244, [774, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bonusroom.png", 244, 244, [6, 518, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bonusroom.png", 244, 244, [262, 518, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bonusroom.png", 244, 244, [518, 518, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-bonusroom.png", 244, 244, [774, 518, 244, 244]))
+    end if
+    if area = "parentsroom"
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-parentsroom.png", 244, 244, [6, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-parentsroom.png", 244, 244, [262, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-parentsroom.png", 244, 244, [518, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-parentsroom.png", 244, 244, [774, 6, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-parentsroom.png", 244, 244, [6, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-parentsroom.png", 244, 244, [262, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-parentsroom.png", 244, 244, [518, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-parentsroom.png", 244, 244, [774, 262, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-parentsroom.png", 244, 244, [6, 518, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-parentsroom.png", 244, 244, [262, 518, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-parentsroom.png", 244, 244, [518, 518, 244, 244]))
+        m.upstairsActivitySprites.Push(PreviewBitmap("images/indoor-activity-parentsroom.png", 244, 244, [774, 518, 244, 244]))
+    end if
 end sub

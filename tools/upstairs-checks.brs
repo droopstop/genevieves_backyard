@@ -1,14 +1,15 @@
 sub Main()
     CheckIndoor(IsHouseTravelAction("house", "stairsup"), "stairs reachable downstairs")
-    CheckIndoor(HouseActionAt(110, 450) = "stairsup", "wall staircase has a reachable entrance")
+    CheckIndoor(HouseActionAt(110, 380) = "stairsup", "wall staircase has a reachable entrance")
     CheckIndoor(HouseActionAt(640, 450) = "", "middle of living room is clear")
     CheckIndoor(HouseActionAt(460, 450) = "sit_livingsofa", "sofa sitting follows the relocated sofa")
     landing = UpstairsReturn("upstairs")
-    CheckIndoor(HouseActionAt(landing.x + 16, landing.y + 20) = "stairsup", "downstairs arrival is beside the wall staircase")
+    CheckIndoor(HouseActionAt(landing.x + 16, landing.y + 50) = "", "downstairs arrival is clear of the automatic staircase trigger")
     hall = HouseTravel("house", "stairsup")
     CheckIndoor(hall.area = "upstairs", "stairs lead upstairs")
     CheckIndoor(UpstairsActionAt(hall.area, hall.x + 16, hall.y + 20) = "", "hall arrival is clear of stairs and doors")
     rooms = ["bedroom", "playroom", "bonusroom", "parentsroom"]
+    doorXs = [240, 505, 775, 1040]
     actions = {}
     clips = LoadNarrationClips()
     m.yardProjection = false
@@ -26,8 +27,9 @@ sub Main()
     SaveIndoorPreview(screen, "upstairs")
     for i = 0 to 3
         area = rooms[i]
+        PreviewRoomActivitySprites(area)
         CheckIndoor(clips.DoesExist(RoomWelcome(area)), "room welcome has bundled narration")
-        doorway = UpstairsActionAt("upstairs", 187 + i * 300, 380)
+        doorway = UpstairsActionAt("upstairs", doorXs[i], 390)
         CheckIndoor(IsHouseTravelAction("upstairs", doorway), "door is a travel action")
         arrival = HouseTravel("upstairs", doorway)
         CheckIndoor(arrival.area = area, "each door leads to its own room")
@@ -35,8 +37,10 @@ sub Main()
         CheckIndoor(UpstairsReturn(area).area = "upstairs", "Back returns from room to hall")
         room = UpstairsRoom(area)
         completed = {}
+        itemRects = IndoorActivityRects(area)
         for j = 0 to 2
-            action = UpstairsActionAt(area, room.targets[j], 460)
+            item = itemRects[j]
+            action = UpstairsActionAt(area, item.x + item.w / 2, item.y + item.h / 2)
             CheckIndoor(action = room.stations[j], "activity is reachable")
             CheckIndoor(not IsHouseTravelAction(area, action), "activity does not accidentally travel")
             CheckIndoor(not actions.DoesExist(action), "each room has distinct activities")
@@ -55,22 +59,37 @@ sub Main()
             completed[area + ":" + action] = true
         end for
         for each seat in UpstairsSeats(area)
-            CheckIndoor(UpstairsActionAt(area, seat.walkX, 560) = seat.action, "seat is reachable independently of activities")
+            CheckIndoor(UpstairsActionAt(area, seat.walkX, seat.touchY) = seat.action, "seat is reachable independently of activities")
             CheckIndoor(FindIndoorSeat(area, seat.action) <> invalid, "seat has a furniture position")
             DrawUpstairs(screen, area, titleFont, labelFont, bodyFont, completed)
             DrawUpstairsTask(screen, {area: area, action: seat.action, frame: 9000}, &hF05A9DFF, labelFont)
             SaveIndoorPreview(screen, area + "-" + seat.action)
             screen.commands = []
         end for
-        CheckIndoor(UpstairsActionAt(area, 640, 640) = "hallway", "visible exit returns to hall")
+        CheckIndoor(UpstairsActionAt(area, 640, 640) = "", "old floor text cannot activate anything")
         CheckIndoor(HouseTravel(area, "hallway").area = "upstairs", "OK returns to hall")
         DrawUpstairs(screen, area, titleFont, labelFont, bodyFont, completed)
         SaveIndoorPreview(screen, area)
     end for
+    contact = {contact: ""}
+    CheckIndoor(not ObserveIndoorContact(contact, "playroom", "dollhouse", false, false), "standing still does not activate an object on arrival")
+    CheckIndoor(ObserveIndoorContact(contact, "playroom", "dollhouse", true, false), "walking into an item activates it")
+    CheckIndoor(not ObserveIndoorContact(contact, "playroom", "dollhouse", true, false), "completed activity does not repeat while staying at the item")
+    CheckIndoor(not ObserveIndoorContact(contact, "playroom", "", true, false), "leaving an object rearms interaction")
+    CheckIndoor(ObserveIndoorContact(contact, "playroom", "dollhouse", true, false), "walking back replays an activity")
+    CheckIndoor(not ObserveIndoorContact(contact, "playroom", "playkitchen", true, true), "another activity cannot interrupt animation")
+    for each area in rooms
+        for each target in UpstairsRoom(area).targets
+            CheckIndoor(UpstairsActionAt(area, target, 515) = "", "old activity text strip is inactive")
+        end for
+        for each seat in UpstairsSeats(area)
+            CheckIndoor(UpstairsActionAt(area, seat.walkX, 560) = "", "old SIT text strip is inactive")
+        end for
+    end for
     CheckIndoor(actions.Count() = 12, "twelve playable activities")
     CheckIndoor(UpstairsReturn("upstairs").area = "house", "Back goes downstairs")
     CheckIndoor(HouseTravel("upstairs", "stairsdown").area = "house", "OK goes downstairs")
-    CheckIndoor(UpstairsActionAt("upstairs", 640, 640) = "stairsdown", "stairs down are reachable")
+    CheckIndoor(UpstairsActionAt("upstairs", 1145, 620) = "stairsdown", "real stairwell is reachable")
     CheckIndoor(not IsUpstairsArea("yard"), "yard navigation unchanged")
     CheckIndoor(clips.DoesExist("Sit down and relax. Press OK or Back to stand up."), "sitting has bundled narration")
     CheckIndoor(clips.DoesExist(UpstairsPrompt("stairsup") + "."), "upward stair narration")
