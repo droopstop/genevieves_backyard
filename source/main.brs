@@ -284,7 +284,7 @@ sub Main()
                         actionDoneFrames = 0
                         upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
                     else if currentArea <> "yard" and not IsPlanetArea(currentArea) and currentAction <> ""
-                        activeTask = {area: currentArea, action: currentAction, frame: 0, duration: 150}
+                        activeTask = {area: currentArea, action: currentAction, frame: 0, duration: 150, x: playerX, y: playerY, facing: playerFacing}
                         if IsSeatAction(currentAction)
                             activeTask.duration = 2147483647
                             missionVoice.Say("Sit down and relax. Use an arrow button to stand up.")

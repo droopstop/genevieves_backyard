@@ -34,7 +34,7 @@ end function
 function RecordIndoorResult(world, area, action, outfitIndex)
     if UpstairsRoom(area) = invalid then return outfitIndex
     world[area + ":" + action] = true
-    if action = "dressup" then return (outfitIndex + 1) mod 3
+    if action = "dressup" then return NextIndoorOutfitIndex(outfitIndex)
     return outfitIndex
 end function
 

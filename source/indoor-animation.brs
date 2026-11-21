@@ -32,7 +32,7 @@ end sub
 function IndoorAnimationPlacement(action)
     if action = "makebed" then return {x: 225, y: 348, h: 110}
     if action = "story" then return {x: 625, y: 384, h: 100}
-    if action = "dressup" then return {x: 990, y: 385, h: 100}
+    if action = "dressup" then return {x: 990, y: 385, h: 78}
     if action = "dollhouse" then return {x: 220, y: 437, h: 100}
     if action = "playkitchen" then return {x: 375, y: 397, h: 110}
     if action = "drawboard" then return {x: 920, y: 286, h: 125}
@@ -45,6 +45,18 @@ function IndoorAnimationPlacement(action)
 end function
 
 sub DrawIndoorActivityFrame(screen, task, dressColor)
+    if task.action = "dressup"
+        x = 974 : y = 369 : facing = 0
+        if task.DoesExist("x") then x = task.x
+        if task.DoesExist("y") then y = task.y
+        if task.DoesExist("facing") then facing = task.facing
+        ' Dress-up uses the walking renderer and position, so changing never resizes her.
+        DrawGenevieve(screen, x, y, dressColor, 0, facing)
+        sparkleSize = 11 + Int(Sin(task.frame * 0.12) * 4)
+        DrawPlanetSprite(screen, 3, x - 10, y + 7, sparkleSize, sparkleSize)
+        DrawPlanetSprite(screen, 3, x + 42, y - 5, sparkleSize, sparkleSize)
+        return
+    end if
     if task.action = "cozyread"
         DrawIndoorSitting(screen, {x: 220, y: 365, pose: 0}, task.frame, dressColor)
         DrawIndoorResultProp(screen, 10, 220, 345, 38, 26)

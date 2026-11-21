@@ -55,8 +55,9 @@ starts with fresh activities:
 folded blankets and pillows, dolls placed in the dollhouse, pretend food on the
 kitchen counter, a rainbow on the whiteboard, the completed wooden puzzle,
 illuminated and twinkling Christmas lights, a family photo, and arranged flowers.
-Dress-up cycles between pink, lavender, and blue outfits; walking and sitting
-use the chosen outfit. The picture book and couch tell original three-page
+Every dress-up play advances pink to lavender to blue and back to pink. Walking
+and dress-up use the same visible height and position; walking and sitting use
+the chosen outfit. The picture book and couch tell original three-page
 stories aloud with captions. Family pictures have a three-part spoken memory.
 Moving away stops story or photo narration; moving from the couch also stands Genevieve up.
 

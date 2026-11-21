@@ -93,6 +93,31 @@ sub Main()
     CheckIndoor(outfit = 1 and world["bedroom:dressup"], "dress-up selects a lasting new outfit")
     CheckIndoor(RecordIndoorResult(world, "bedroom", "dressup", 1) = 2, "dress-up cycles to the blue outfit")
     CheckIndoor(RecordIndoorResult(world, "bedroom", "dressup", 2) = 0, "dress-up can return to pink")
+    outfit = 0
+    replayWorld = {}
+    for each expectedOutfit in [1, 2, 0, 1, 2, 0]
+        outfit = RecordIndoorResult(replayWorld, "bedroom", "dressup", outfit)
+        CheckIndoor(outfit = expectedOutfit, "every dress-up play advances pink, lavender, blue, then pink")
+        ResetIndoorRoomOnExit(replayWorld, "bedroom", "upstairs")
+    end for
+    for outfitIndex = 0 to 2
+        bounds = IndoorWardrobeWalkBounds(outfitIndex)
+        for direction = 0 to 3
+            rect = bounds[direction]
+            m.characterSprites[direction] = PreviewBitmap("images/wardrobe-walk-" + Str(outfitIndex).Trim() + ".png", rect[2], rect[3], rect)
+        end for
+        for direction = 0 to 3
+            screen.commands = []
+            DrawGenevieve(screen, 950, 380, &hF05A9DFF, 0, direction)
+            walkDraw = screen.commands[0]
+            DrawIndoorActivityFrame(screen, {area: "bedroom", action: "dressup", frame: 74, x: 950, y: 380, facing: direction}, &hF05A9DFF)
+            outfitDraw = screen.commands[1]
+            CheckIndoor(walkDraw[1] = outfitDraw[1] and walkDraw[2] = outfitDraw[2], "dress-up stays at the walking position")
+            CheckIndoor(walkDraw[3] = outfitDraw[3] and walkDraw[4] = outfitDraw[4], "dress-up keeps the walking scale")
+            CheckIndoor(Abs(walkDraw[4] * bounds[direction][3] - 78) < 0.01, "every outfit and direction has the same visible height")
+        end for
+    end for
+    screen.commands = []
     for each action in ["story", "cozyread", "photos"]
         lines = IndoorStoryLines(action)
         CheckIndoor(lines.Count() = 3, "reading activities have actual three-part narration")
@@ -109,8 +134,10 @@ sub Main()
         voice.speaking = false
         CheckIndoor(UpdateIndoorStory(task, voice), "story completes after all sentences finish")
     end for
+    bounds = IndoorWardrobeWalkBounds(1)
     for col = 0 to 3
-        m.characterSprites[col] = PreviewBitmap("images/wardrobe-walk-1.png", 128, 192, [col * 128, 0, 128, 192])
+        rect = bounds[col]
+        m.characterSprites[col] = PreviewBitmap("images/wardrobe-walk-1.png", rect[2], rect[3], rect)
     end for
     DrawUpstairs(screen, "bedroom", titleFont, labelFont, bodyFont, {})
     DrawGenevieve(screen, 960, 395, &hF05A9DFF, 0, 0)
