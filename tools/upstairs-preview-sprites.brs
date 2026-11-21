@@ -1,10 +1,10 @@
 sub InitializeIndoorPreviewSprites()
-    m.houseStairs = PreviewBitmap("images/house-stairs.png", 1024, 1536, invalid)
+    m.houseStairs = PreviewBitmap("images/house-stairs.png", 520, 750, invalid)
     m.upstairsBackdrops = {}
-    m.upstairsBackdrops["bedroom"] = PreviewBitmap("images/upstairs-bedroom.png", 1280, 720, invalid)
-    m.upstairsBackdrops["playroom"] = PreviewBitmap("images/upstairs-playroom.png", 1280, 720, invalid)
-    m.upstairsBackdrops["bonusroom"] = PreviewBitmap("images/upstairs-bonusroom.png", 1280, 720, invalid)
-    m.upstairsBackdrops["parentsroom"] = PreviewBitmap("images/upstairs-parentsroom.png", 1280, 720, invalid)
+    m.upstairsBackdrops["bedroom"] = PreviewBitmap("images/upstairs-bedroom.jpg", 1280, 720, invalid)
+    m.upstairsBackdrops["playroom"] = PreviewBitmap("images/upstairs-playroom.jpg", 1280, 720, invalid)
+    m.upstairsBackdrops["bonusroom"] = PreviewBitmap("images/upstairs-bonusroom.jpg", 1280, 720, invalid)
+    m.upstairsBackdrops["parentsroom"] = PreviewBitmap("images/upstairs-parentsroom.jpg", 1280, 720, invalid)
     m.heartSprite = PreviewBitmap("images/stitch-heart.png", 128, 128, invalid)
     m.characterSprites = []
     m.characterSprites.Push(PreviewBitmap("images/characters-directions.png", 262, 450, [125, 32, 262, 450]))

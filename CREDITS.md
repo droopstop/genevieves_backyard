@@ -120,7 +120,7 @@ Pappy character behavior and mission text added for Genevieve's grandpa.
 
 # Upstairs expansion
 
-The four `images/upstairs-*.png` room backgrounds and transparent
+The four `images/upstairs-*.jpg` room backgrounds and transparent
 `images/house-stairs.png` were created with the built-in OpenAI image generation
 tool, using the user's room photographs as furnishing/color references and
 `house-interior.png` as the storybook style and layout reference. The bedroom's

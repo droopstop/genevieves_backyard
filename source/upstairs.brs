@@ -186,10 +186,10 @@ end function
 
 sub LoadUpstairsArtwork()
     m.upstairsBackdrops = {
-        bedroom: CreateObject("roBitmap", "pkg:/images/upstairs-bedroom.png")
-        playroom: CreateObject("roBitmap", "pkg:/images/upstairs-playroom.png")
-        bonusroom: CreateObject("roBitmap", "pkg:/images/upstairs-bonusroom.png")
-        parentsroom: CreateObject("roBitmap", "pkg:/images/upstairs-parentsroom.png")
+        bedroom: CreateObject("roBitmap", "pkg:/images/upstairs-bedroom.jpg")
+        playroom: CreateObject("roBitmap", "pkg:/images/upstairs-playroom.jpg")
+        bonusroom: CreateObject("roBitmap", "pkg:/images/upstairs-bonusroom.jpg")
+        parentsroom: CreateObject("roBitmap", "pkg:/images/upstairs-parentsroom.jpg")
     }
     m.houseStairs = CreateObject("roBitmap", "pkg:/images/house-stairs.png")
 end sub
