@@ -133,3 +133,9 @@ Piper `en_US-lessac-high` voice and synthesis settings as the existing game.
 Text is exported by `tools/export-upstairs-narration.brs` and recorded in
 `tools/upstairs-narration-texts.json`. Named MP3 samples can be rebuilt with
 `tools/build_upstairs_audio_samples.py`.
+
+The living room's `images/house-interior-wall-stairs.jpg` was edited with the
+built-in OpenAI image generator to integrate the staircase into the far-left
+wall and place the sofa below the window. Navigation, climbing, and sitting
+positions match the new architecture. The original living room art is retained
+as a source reference.

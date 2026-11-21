@@ -1,6 +1,6 @@
 ' The yard cottage opens into a living room with Pops in his recliner.
 sub LoadHouseArtwork()
-    m.houseBackdrop = CreateObject("roBitmap", "pkg:/images/house-interior.png")
+    m.houseBackdrop = CreateObject("roBitmap", "pkg:/images/house-interior-wall-stairs.jpg")
     m.popsSprite = CreateObject("roBitmap", "pkg:/images/pops-recliner.png")
 end sub
 
@@ -73,4 +73,10 @@ function GetPopsMission(index)
         result.steps = [MakeStep("mars", "redrock", "Use the Space Crate and collect 10 Mars rocks for Pops!"), MakeStep("house", "twirl", "Come back inside and celebrate with Pops! Press Play/Pause.")]
     end if
     return result
+end function
+
+function HouseActionAt(x, y)
+    if PointInRect(x, y, 20, 350, 190, 160) then return "stairsup"
+    if PointInRect(x, y, 330, 370, 300, 130) then return "sit_livingsofa"
+    return ""
 end function

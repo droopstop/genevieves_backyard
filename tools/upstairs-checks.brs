@@ -1,5 +1,10 @@
 sub Main()
     CheckIndoor(IsHouseTravelAction("house", "stairsup"), "stairs reachable downstairs")
+    CheckIndoor(HouseActionAt(110, 450) = "stairsup", "wall staircase has a reachable entrance")
+    CheckIndoor(HouseActionAt(640, 450) = "", "middle of living room is clear")
+    CheckIndoor(HouseActionAt(460, 450) = "sit_livingsofa", "sofa sitting follows the relocated sofa")
+    landing = UpstairsReturn("upstairs")
+    CheckIndoor(HouseActionAt(landing.x + 16, landing.y + 20) = "stairsup", "downstairs arrival is beside the wall staircase")
     hall = HouseTravel("house", "stairsup")
     CheckIndoor(hall.area = "upstairs", "stairs lead upstairs")
     CheckIndoor(UpstairsActionAt(hall.area, hall.x + 16, hall.y + 20) = "", "hall arrival is clear of stairs and doors")
@@ -12,6 +17,9 @@ sub Main()
     titleFont = {size: 34, GetOneLineWidth: TestWidth}
     labelFont = {size: 20, GetOneLineWidth: TestWidth}
     bodyFont = {size: 18, GetOneLineWidth: TestWidth}
+    DrawHouse(screen, titleFont, labelFont, labelFont, bodyFont)
+    DrawPops(screen, CreatePops(), invalid, false, labelFont, bodyFont)
+    SaveIndoorPreview(screen, "living-room-wall-stairs")
     DrawHouseStairs(screen, labelFont, bodyFont)
     SaveIndoorPreview(screen, "stairs")
     DrawUpstairs(screen, "upstairs", titleFont, labelFont, bodyFont, {})

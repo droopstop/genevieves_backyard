@@ -24,5 +24,10 @@
     "prompt": "Transparent wooden staircase with cream spindles and honey oak handrails, matching house-interior.png storybook art; front view, full staircase, no room or people.",
     "runtime_asset": "images/house-stairs.png",
     "generator": "built-in image_gen"
+  },
+  "living_room_wall_stairs": {
+    "runtime_asset": "images/house-interior-wall-stairs.jpg",
+    "generator": "built-in image_gen",
+    "prompt": "Integrate the staircase into the far-left side wall, physically enclosed and ascending to an upstairs opening. Keep central rug and floor clear. Move cream sofa below the window to left of center. Preserve original sunny storybook living room style and right-side furnishings."
   }
 }

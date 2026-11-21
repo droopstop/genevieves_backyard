@@ -23,7 +23,7 @@ function IsHouseTravelAction(area, action)
 end function
 
 function UpstairsReturn(area)
-    if area = "upstairs" then return {area: "house", x: 220, y: 530}
+    if area = "upstairs" then return {area: "house", x: 100, y: 475}
     return {area: "upstairs", x: 624, y: 530}
 end function
 
@@ -95,20 +95,12 @@ function UpstairsSuccess(action)
 end function
 
 sub DrawHouseStairs(screen, labelFont, bodyFont)
-    if m.houseStairs <> invalid
-        screen.DrawScaledObject(80, 180, 260 / m.houseStairs.GetWidth(), 375 / m.houseStairs.GetHeight(), m.houseStairs)
-    else
-    screen.DrawRect(88, 215, 246, 338, &h654B45FF)
-    for i = 0 to 7
-        screen.DrawRect(106, 242 + i * 35, 210, 30, &hD7AE7EFF)
-        screen.DrawRect(106, 267 + i * 35, 210, 5, &h956D50FF)
-    end for
-    screen.DrawRect(87, 205, 15, 350, &hFFF0D9FF)
-    screen.DrawRect(320, 205, 15, 350, &hFFF0D9FF)
-    end if
-    screen.DrawRect(80, 165, 260, 45, &h173E52FF)
-    CenterLabel(screen, "UPSTAIRS", 210, 176, &hFFE06AFF, labelFont)
-    CenterLabel(screen, "Walk here + press OK", 210, 565, &h173E52FF, bodyFont)
+    ' The stairs are part of the far-left wall in the house backdrop.
+    screen.DrawRect(10, 420, 200, 40, &h173E52DD)
+    CenterLabel(screen, "UPSTAIRS", 110, 429, &hFFE06AFF, labelFont)
+    CenterLabel(screen, "Walk here + press OK", 110, 469, &h173E52FF, bodyFont)
+    screen.DrawRect(425, 445, 70, 28, &h173E52BB)
+    CenterLabel(screen, "SIT", 460, 449, &hFFE06AFF, bodyFont)
 end sub
 
 sub DrawUpstairs(screen, area, titleFont, labelFont, bodyFont, completed)
@@ -212,7 +204,7 @@ function UpstairsSeats(area)
     if area = "playroom" then return [{action: "sit_chair1", walkX: 535, x: 535, y: 425}, {action: "sit_chair2", walkX: 635, x: 635, y: 425}]
     if area = "bonusroom" then return [{action: "sit_sofa1", walkX: 105, x: 125, y: 350}, {action: "sit_sofa2", walkX: 210, x: 220, y: 335}, {action: "sit_sofa3", walkX: 315, x: 315, y: 324}, {action: "sit_sofa4", walkX: 420, x: 420, y: 320}]
     if area = "parentsroom" then return [{action: "sit_parentbed", walkX: 170, x: 170, y: 393}, {action: "sit_bike", walkX: 1150, x: 1140, y: 370}]
-    if area = "house" then return [{action: "sit_livingsofa", walkX: 48, x: 55, y: 420}]
+    if area = "house" then return [{action: "sit_livingsofa", walkX: 460, x: 460, y: 296}]
     return []
 end function
 
@@ -247,7 +239,7 @@ sub DrawStairClimb(screen, task, dressColor)
         if m.houseStairs <> invalid then screen.DrawScaledObject(510, 300, 260 / m.houseStairs.GetWidth(), 300 / m.houseStairs.GetHeight(), m.houseStairs)
         DrawGenevieve(screen, 624, 340 + progress * 205, dressColor, Int(Sin(task.frame * 0.5) * 3), 0)
     else
-        DrawGenevieve(screen, 190, 495 - progress * 255, dressColor, Int(Sin(task.frame * 0.5) * 3), 1)
+        DrawGenevieve(screen, 80 + progress * 110, 365 - progress * 300, dressColor, Int(Sin(task.frame * 0.5) * 3), 1)
     end if
 end sub
 

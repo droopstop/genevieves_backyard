@@ -23,7 +23,7 @@ He remains seated at the firepit with his cigar.
 
 ## Upstairs rooms
 
-Inside the house, walk to the staircase on the left and press **OK**. Choose
+Inside the house, walk to the staircase built into the far-left wall and press **OK**. Choose
 one of the four colored doors upstairs and press **OK**:
 
 - **Genevieve's bedroom:** make her bed, read a picture book, and try colorful bows.
@@ -43,8 +43,7 @@ to return to Pops. Existing outdoor missions continue while exploring upstairs.
 Walk onto a **SIT** marker and press **OK** to sit on a bed, either playroom
 chair, any of the four couch seats, or the stationary bike seat. She stays
 seated until you press **OK** or **Back** to stand up; standing preserves her
-room and walking position. The downstairs sofa also has a sitting spot near
-its left edge.
+room and walking position. The downstairs sofa below the window also has a sitting spot.
 
 All new room introductions, activity instructions and results, staircase
 instructions, and sitting instructions have offline Lessac narration. Individual

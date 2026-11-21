@@ -422,8 +422,7 @@ sub Main()
                 nearbyPlace = "house"
             end if
         else if currentArea = "house"
-            if PointInRect(centerX, centerY, 80, 345, 260, 215) then currentAction = "stairsup"
-            if PointInRect(centerX, centerY, 28, 560, 50, 50) then currentAction = "sit_livingsofa"
+            currentAction = HouseActionAt(centerX, centerY)
         else if IsUpstairsArea(currentArea)
             currentAction = UpstairsActionAt(currentArea, centerX, centerY)
         else if currentArea = "garden"

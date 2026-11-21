@@ -1,4 +1,6 @@
 sub InitializeIndoorPreviewSprites()
+    m.houseBackdrop = PreviewBitmap("images/house-interior-wall-stairs.jpg", 1280, 720, invalid)
+    m.popsSprite = PreviewBitmap("images/pops-recliner.png", 1213, 1296, invalid)
     m.houseStairs = PreviewBitmap("images/house-stairs.png", 520, 750, invalid)
     m.upstairsBackdrops = {}
     m.upstairsBackdrops["bedroom"] = PreviewBitmap("images/upstairs-bedroom.jpg", 1280, 720, invalid)
