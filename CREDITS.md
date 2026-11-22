@@ -155,3 +155,10 @@ three-part stories and family-picture narration use the same offline Lessac voic
 Whole-character runtime images for Pappy, Gigi, Mommy, Daddy, and Pops are scaled
 to multiple times their on-screen size to reduce Roku texture memory and installer
 storage while retaining their illustrated appearance and transparency.
+
+Princess and cowgirl walking/seated costumes and the cream-and-pink ride-on pony
+with sixteen mounted outfit/direction poses were created with the built-in OpenAI
+image generator. The supplied toy photograph guided the pony. Prompts and atlas
+bounds are in `tools/outfit-pony-art.json`, `tools/wardrobe-walk-bounds.json`, and
+`tools/living-room-pony-bounds.json`. New choices and pony controls have offline
+Lessac narration and matching named audio samples.

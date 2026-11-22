@@ -15,6 +15,12 @@ sub Main()
             end for
         end if
     end for
+    texts.Push(LivingRoomPonyInstructions())
+    texts.Push(LivingRoomPonyDismountWords())
+    texts.Push(IndoorOutfitChooserInstruction())
+    for index = 0 to 3
+        texts.Push(IndoorOutfitSpokenName(index))
+    end for
     texts.Push(UpstairsPrompt("stairsup") + ".")
     texts.Push(UpstairsPrompt("stairsdown") + ".")
     print "UPSTAIRS_AUDIO_JSON:" + FormatJson(texts)

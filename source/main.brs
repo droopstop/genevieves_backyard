@@ -97,6 +97,34 @@ sub Main()
             if type(message) = "roUniversalControlEvent"
                 button = message.GetKey()
                 pressed = message.IsPress()
+                if IsLivingRoomPonyRide(activeTask) and pressed and (button = 0 or button = 6)
+                    landing = StopLivingRoomPonyRide(m.livingRoomPony)
+                    playerX = landing.x : playerY = landing.y
+                    activeTask = invalid
+                    upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
+                    indoorContact.contact = "house:ridepony"
+                    missionVoice.Say(LivingRoomPonyDismountWords())
+                    button = -1
+                end if
+                if IsIndoorOutfitChooser(activeTask)
+                    choice = HandleIndoorOutfitChoice(activeTask, button, pressed)
+                    if choice = "changed"
+                        missionVoice.Say(IndoorOutfitSpokenName(activeTask.selectedOutfit))
+                    else if choice = "confirm"
+                        if SetIndoorWardrobeOutfit(activeTask.selectedOutfit)
+                            activeTask.outfitChooser = false
+                            activeTask.frame = 0
+                            activeTask.duration = 45
+                            CloseIndoorOutfitPreviews()
+                        end if
+                    else if choice = "cancel"
+                        activeTask = invalid
+                        CloseIndoorOutfitPreviews()
+                        missionVoice.Flush()
+                    end if
+                    upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
+                    button = -1
+                end if
                 if ShouldStandFromIndoorSeat(button, pressed, activeTask)
                     activeTask = invalid
                     missionVoice.Flush()
@@ -283,6 +311,11 @@ sub Main()
                         completedActions = CreateObject("roAssociativeArray")
                         actionDoneFrames = 0
                         upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
+                    else if currentArea = "house" and currentAction = "ridepony"
+                        activeTask = StartLivingRoomPonyRide(playerX, playerY, playerFacing)
+                        missionVoice.Say(LivingRoomPonyInstructions())
+                        actionDoneFrames = 0
+                        upHeld = false : downHeld = false : leftHeld = false : rightHeld = false
                     else if currentArea <> "yard" and not IsPlanetArea(currentArea) and currentAction <> ""
                         activeTask = {area: currentArea, action: currentAction, frame: 0, duration: 150, x: playerX, y: playerY, facing: playerFacing}
                         if IsSeatAction(currentAction)
@@ -293,6 +326,8 @@ sub Main()
                             PrepareIndoorActivity(activeTask)
                             if IsIndoorStoryAction(currentAction)
                                 missionVoice.Say(IndoorStoryLines(currentAction)[0])
+                            else if IsIndoorOutfitChooser(activeTask)
+                                missionVoice.Say(IndoorOutfitChooserInstruction())
                             else
                                 missionVoice.Say(UpstairsPrompt(currentAction) + ".")
                             end if
@@ -359,7 +394,11 @@ sub Main()
 
         oldPlayerX = playerX
         oldPlayerY = playerY
-        if activeTask = invalid
+        if IsLivingRoomPonyRide(activeTask)
+            UpdateLivingRoomPony(m.livingRoomPony, upHeld, downHeld, leftHeld, rightHeld)
+            playerX = m.livingRoomPony.x - 16
+            playerY = m.livingRoomPony.y - 50
+        else if activeTask = invalid
             if upHeld then playerY = playerY - 4
             if downHeld then playerY = playerY + 4
             if leftHeld then playerX = playerX - 4
@@ -379,7 +418,7 @@ sub Main()
         centerX = playerX + 16
         centerY = playerY + 20
 
-        if currentArea <> "yard" and not IsUpstairsArea(currentArea) and PointInRect(centerX, centerY, 555, 625, 170, 75)
+        if currentArea <> "yard" and not IsUpstairsArea(currentArea) and not IsLivingRoomPonyRide(activeTask) and PointInRect(centerX, centerY, 555, 625, 170, 75)
             if IsPlanetArea(currentArea)
                 currentArea = "firepit"
                 playerX = 170
@@ -434,6 +473,7 @@ sub Main()
             end if
         else if currentArea = "house"
             currentAction = HouseActionAt(centerX, playerY + 50)
+            if LivingRoomPonyNearby(centerX, playerY + 50, m.livingRoomPony) then currentAction = "ridepony"
         else if IsUpstairsArea(currentArea)
             currentAction = UpstairsActionAt(currentArea, centerX, playerY + 50)
         else if currentArea = "garden"
@@ -632,7 +672,11 @@ sub Main()
         if upHeld or downHeld or leftHeld or rightHeld then walkBob = Int(Sin(spaceFrame * 0.45) * 2)
         if activeTask <> invalid
             DrawTaskAnimation(screen, activeTask, dressColor, labelFont)
-            if IsAutomaticIndoorAction(activeTask.area, activeTask.action)
+            if IsLivingRoomPonyRide(activeTask)
+                DrawLivingRoomPonyControls(screen, labelFont)
+            else if IsIndoorOutfitChooser(activeTask)
+                ' The outfit picker is drawn above the scene after the other UI.
+            else if IsAutomaticIndoorAction(activeTask.area, activeTask.action)
                 DrawIndoorActionPopup(screen, activeTask, labelFont)
                 if IsIndoorStoryAction(activeTask.action) then DrawIndoorStoryCaption(screen, activeTask, labelFont, bodyFont)
             else
@@ -704,6 +748,7 @@ sub Main()
         if currentArea <> "yard" then screen.DrawText("Play/Pause: twirl", 40, 691, &hFFF0C2FF, bodyFont)
         DrawMissionFireworks(screen, missionPresentation)
         if not IsUpstairsArea(currentArea) then DrawMissionHud(screen, missionHud, labelFont, bodyFont)
+        if IsIndoorOutfitChooser(activeTask) then DrawIndoorOutfitChooser(screen, activeTask, titleFont, labelFont, bodyFont)
         screen.SwapBuffers()
         sleep(16)
     end while
@@ -1331,6 +1376,11 @@ end sub
 sub DrawCharacterSprite(screen, index, x, y, width, height)
     x = SceneX(x)
     sprite = m.characterSprites[index]
+    if index < 4 and m.indoorOutfitIndex <> invalid
+        scale = height / IndoorWardrobeBodyHeight(m.indoorOutfitIndex, index)
+        screen.DrawScaledObject(Int(x - sprite.GetWidth() * scale / 2), Int(y + height / 2 - sprite.GetHeight() * scale), scale, scale, sprite)
+        return
+    end if
     scale = width / sprite.GetWidth()
     if height / sprite.GetHeight() < scale then scale = height / sprite.GetHeight()
     screen.DrawScaledObject(Int(x - sprite.GetWidth() * scale / 2), Int(y - sprite.GetHeight() * scale / 2), scale, scale, sprite)
@@ -1354,7 +1404,9 @@ sub DrawTaskAnimation(screen, task, dressColor, labelFont)
     frame = task.frame
     wave = Sin(frame * 0.09)
     bob = Int(wave * 4)
-    if (IsUpstairsArea(task.area) and action <> "twirl") or IsSeatAction(action) or action = "stairsup"
+    if IsLivingRoomPonyRide(task)
+        DrawLivingRoomPony(screen, true)
+    else if (IsUpstairsArea(task.area) and action <> "twirl") or IsSeatAction(action) or action = "stairsup"
         DrawUpstairsTask(screen, task, dressColor, labelFont)
     else if action = "twirl"
         DrawTwirl(screen, task, dressColor)

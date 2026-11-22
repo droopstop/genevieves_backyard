@@ -55,9 +55,15 @@ starts with fresh activities:
 folded blankets and pillows, dolls placed in the dollhouse, pretend food on the
 kitchen counter, a rainbow on the whiteboard, the completed wooden puzzle,
 illuminated and twinkling Christmas lights, a family photo, and arranged flowers.
-Every dress-up play advances pink to lavender to blue and back to pink. Walking
-and dress-up use the same visible height and position; walking and sitting use
-the chosen outfit. The picture book and couch tell original three-page
+Walking up to the bedroom dresser opens a four-outfit picker: Original, Purple,
+Princess, or Cowgirl. Use arrows to choose, OK to wear it, or Back to cancel.
+Walking and dress-up keep the same body size, including beneath hats and tiaras;
+walking, sitting, and pony riding use the chosen outfit.
+
+The cream-and-pink ride-on pony in the living room is based on the supplied toy
+photo. Walk up to mount, steer with the arrow buttons, and press OK to get off
+onto clear floor beside it. Riding stays inside the room and avoids the stairs
+and Pops’ furniture; the pony returns to its parking place when the room is left. The picture book and couch tell original three-page
 stories aloud with captions. Family pictures have a three-part spoken memory.
 Moving away stops story or photo narration; moving from the couch also stands Genevieve up.
 

@@ -2,6 +2,7 @@
 sub LoadHouseArtwork()
     m.houseBackdrop = CreateObject("roBitmap", "pkg:/images/house-interior-wall-stairs.jpg")
     m.popsSprite = CreateObject("roBitmap", "pkg:/images/pops-recliner.png")
+    LoadLivingRoomPonyArtwork()
 end sub
 
 function IsHouseEntrance(x, y)
@@ -33,6 +34,9 @@ sub DrawHouse(screen, titleFont, labelFont, promptFont, bodyFont)
     screen.Clear(&hB9956FFF)
     if m.houseBackdrop <> invalid
         screen.DrawScaledObject(0, 0, 1280 / m.houseBackdrop.GetWidth(), 720 / m.houseBackdrop.GetHeight(), m.houseBackdrop)
+    end if
+    if m.livingRoomPony <> invalid
+        if not m.livingRoomPony.mounted then DrawLivingRoomPony(screen, false)
     end if
     DrawHouseStairs(screen, labelFont, bodyFont)
     DrawHeader(screen, "INSIDE THE HOUSE", titleFont, bodyFont)

@@ -200,12 +200,47 @@
     "runtime_clip": "audio/narration/f30c332b5a65bc20.mp3"
   },
   {
-    "sample": "41-climb-the-stairs-upstairs.mp3",
+    "sample": "41-hop-on-your-pony-use-the-arrow-buttons-to-ride-around-the-living-room-press-ok-to-get.mp3",
+    "text": "Hop on your pony! Use the arrow buttons to ride around the living room. Press OK to get off.",
+    "runtime_clip": "audio/narration/b868d469fa28d942.mp3"
+  },
+  {
+    "sample": "42-you-hopped-off-your-pony-what-a-fun-ride.mp3",
+    "text": "You hopped off your pony. What a fun ride!",
+    "runtime_clip": "audio/narration/989f8b170e89a29a.mp3"
+  },
+  {
+    "sample": "43-use-the-arrow-buttons-to-choose-an-outfit-press-ok-to-wear-it-or-back-to-cancel.mp3",
+    "text": "Use the arrow buttons to choose an outfit. Press OK to wear it, or Back to cancel.",
+    "runtime_clip": "audio/narration/c518e6b2132f4cb3.mp3"
+  },
+  {
+    "sample": "44-original-clothes.mp3",
+    "text": "Original clothes.",
+    "runtime_clip": "audio/narration/161a65eb1c710b15.mp3"
+  },
+  {
+    "sample": "45-purple-outfit.mp3",
+    "text": "Purple outfit.",
+    "runtime_clip": "audio/narration/aaeec8c3598b390f.mp3"
+  },
+  {
+    "sample": "46-princess-outfit.mp3",
+    "text": "Princess outfit.",
+    "runtime_clip": "audio/narration/58377329c71b91c2.mp3"
+  },
+  {
+    "sample": "47-cowgirl-outfit.mp3",
+    "text": "Cowgirl outfit.",
+    "runtime_clip": "audio/narration/e6a8a8f78778dc9d.mp3"
+  },
+  {
+    "sample": "48-climb-the-stairs-upstairs.mp3",
     "text": "climb the stairs upstairs.",
     "runtime_clip": "audio/narration/04a078dd6b7c86f3.mp3"
   },
   {
-    "sample": "42-go-downstairs-to-pops.mp3",
+    "sample": "49-go-downstairs-to-pops.mp3",
     "text": "go downstairs to Pops.",
     "runtime_clip": "audio/narration/1e7abf3720611177.mp3"
   }

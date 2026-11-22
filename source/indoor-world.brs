@@ -15,6 +15,10 @@ sub PrepareIndoorActivity(task)
     if UpstairsRoom(task.area) = invalid then return
     if m.indoorWorld = invalid then m.indoorWorld = {}
     m.indoorWorld[task.area + ":" + task.action] = false
+    if task.action = "dressup"
+        InitializeIndoorOutfitChooser(task, m.indoorOutfitIndex)
+        LoadIndoorOutfitPreviews()
+    end if
     if IsIndoorStoryAction(task.action)
         task.storyIndex = 0
         task.duration = 2147483647
@@ -34,7 +38,6 @@ end function
 function RecordIndoorResult(world, area, action, outfitIndex)
     if UpstairsRoom(area) = invalid then return outfitIndex
     world[area + ":" + action] = true
-    if action = "dressup" then return NextIndoorOutfitIndex(outfitIndex)
     return outfitIndex
 end function
 

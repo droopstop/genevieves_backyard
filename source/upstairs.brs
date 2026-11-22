@@ -82,6 +82,7 @@ function ObserveIndoorContact(state, area, action, moving, busy)
 end function
 
 function BeginIndoorInteraction(area, action, playerX, playerY, facing)
+    if area = "house" and action = "ridepony" then return {task: StartLivingRoomPonyRide(playerX, playerY, facing), landing: invalid, words: LivingRoomPonyInstructions()}
     if IsHouseTravelAction(area, action) and action <> "stairsup" and action <> "stairsdown"
         landing = HouseTravel(area, action)
         return {task: invalid, landing: landing, words: RoomWelcome(landing.area)}
@@ -96,10 +97,12 @@ function BeginIndoorInteraction(area, action, playerX, playerY, facing)
     task = {area: area, action: action, frame: 0, duration: duration, x: playerX, y: playerY, facing: facing}
     PrepareIndoorActivity(task)
     if IsIndoorStoryAction(action) then words = IndoorStoryLines(action)[0]
+    if IsIndoorOutfitChooser(task) then words = IndoorOutfitChooserInstruction()
     return {task: task, landing: invalid, words: words}
 end function
 
 function UpstairsPrompt(action)
+    if action = "ridepony" then return "ride your pony"
     if IsSeatAction(action) then return "sit down and relax"
     if action = "dollhouse" then return "play with the dollhouse"
     if action = "playkitchen" then return "cook a pretend lunch"
@@ -212,6 +215,7 @@ end sub
 sub UpdateUpstairsArtwork(area)
     if m.loadedUpstairsArea = area then return
     ResetIndoorRoomOnExit(m.indoorWorld, m.loadedUpstairsArea, area)
+    if m.loadedUpstairsArea = "house" and area <> "house" then m.livingRoomPony = CreateLivingRoomPony()
     m.upstairsActivitySprites = []
     m.indoorBedForeground = invalid
     m.indoorDrawingSteps = invalid
@@ -266,13 +270,16 @@ sub DrawIndoorSitting(screen, seat, frame, dressColor)
     if m.indoorSeatSprites <> invalid and m.indoorSeatSprites.Count() = 4
         sprite = m.indoorSeatSprites[pose]
         height = 92
-        scale = height / sprite.GetHeight()
+        referenceHeight = 192
+        hipY = 134.4
+        if m.indoorOutfitIndex = 2 or m.indoorOutfitIndex = 3 then hipY = 150.4
+        scale = height / referenceHeight
         hipX = 0.5
         if pose = 1 then hipX = 0.70
         if pose = 2 then hipX = 0.30
         if pose = 3 then hipX = 0.58
         ' Anchor the bottom of the hips to the cushion; legs remain in front.
-        screen.DrawScaledObject(Int(seat.x - sprite.GetWidth() * scale * hipX), Int(seat.y - height * 0.70), scale, scale, sprite)
+        screen.DrawScaledObject(Int(seat.x - sprite.GetWidth() * scale * hipX), Int(seat.y - hipY * scale), scale, scale, sprite)
     else
         DrawGenevieve(screen, seat.x - 16, seat.y - 48, dressColor, 0, 0)
     end if

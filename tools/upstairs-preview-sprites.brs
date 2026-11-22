@@ -6,6 +6,14 @@ sub InitializeIndoorPreviewSprites()
     m.indoorWorld = {}
     m.indoorResultSprites = []
     m.indoorOutfitIndex = 0
+    m.livingRoomPony = CreateLivingRoomPony()
+    m.livingRoomPonySprites = [] : m.livingRoomPonyRiders = []
+    for each rect in LivingRoomPonyBounds(false)
+        m.livingRoomPonySprites.Push(PreviewBitmap("images/living-room-pony.png", rect[2], rect[3], rect))
+    end for
+    for each rect in LivingRoomPonyBounds(true)
+        m.livingRoomPonyRiders.Push(PreviewBitmap("images/living-room-pony-riders.png", rect[2], rect[3], rect))
+    end for
     m.indoorExitDoor = PreviewBitmap("images/indoor-exit-door.png", 176, 352, invalid)
     m.indoorTreeOn = PreviewBitmap("images/indoor-tree-lit.jpg", 388, 390, invalid)
     m.indoorPuzzleDone = PreviewBitmap("images/indoor-puzzle-done.jpg", 200, 95, invalid)

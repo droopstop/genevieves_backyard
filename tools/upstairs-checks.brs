@@ -22,6 +22,60 @@ sub Main()
     DrawHouse(screen, titleFont, labelFont, labelFont, bodyFont)
     DrawPops(screen, CreatePops(), invalid, false, labelFont, bodyFont)
     SaveIndoorPreview(screen, "living-room-wall-stairs")
+    pony = m.livingRoomPony
+    CheckIndoor(LivingRoomPonyNearby(750, 560, pony), "walking to the parked pony activates it")
+    CheckIndoor(not LivingRoomPonyNearby(400, 560, pony), "distant pony does not activate")
+    ride = StartLivingRoomPonyRide(734, 510, 2)
+    CheckIndoor(IsLivingRoomPonyRide(ride) and pony.mounted, "pony can be mounted")
+    CheckIndoor(not LivingRoomPonyNearby(750, 560, pony), "mounted pony cannot be mounted twice")
+    UpdateLivingRoomPony(pony, false, false, true, false)
+    CheckIndoor(pony.x = 746 and pony.facing = 2 and pony.moving, "left arrow steers the pony")
+    UpdateLivingRoomPony(pony, true, false, false, false)
+    CheckIndoor(pony.y = 556 and pony.facing = 1, "up arrow steers the pony")
+    pony.x = 816 : pony.y = 550
+    UpdateLivingRoomPony(pony, false, false, false, true)
+    CheckIndoor(pony.x = 816, "pony cannot ride through Pops or his furniture")
+    pony.x = 80 : pony.y = 600
+    UpdateLivingRoomPony(pony, false, false, true, false)
+    CheckIndoor(pony.x = 80, "pony stays inside the living room")
+    landing = StopLivingRoomPonyRide(pony)
+    CheckIndoor(not pony.mounted and LivingRoomPonySafe(landing.x + 16, landing.y + 50), "getting off finds clear floor beside the pony")
+    CheckIndoor(clips.DoesExist(LivingRoomPonyInstructions()), "pony riding instructions are recorded")
+    CheckIndoor(clips.DoesExist(LivingRoomPonyDismountWords()), "pony getting-off narration is recorded")
+    pony.x = 630 : pony.y = 580 : pony.facing = 3 : pony.mounted = true
+    for outfit = 0 to 3
+        m.indoorOutfitIndex = outfit
+        DrawHouse(screen, titleFont, labelFont, labelFont, bodyFont)
+        DrawPops(screen, CreatePops(), invalid, false, labelFont, bodyFont)
+        DrawLivingRoomPony(screen, true)
+        DrawLivingRoomPonyControls(screen, labelFont)
+        SaveIndoorPreview(screen, "pony-outfit-" + outfit.ToStr())
+    end for
+    m.indoorOutfitPreviews = []
+    for outfit = 0 to 3
+        rect = IndoorWardrobeWalkBounds(outfit)[0]
+        assets = IndoorWardrobeAssets(outfit)
+        m.indoorOutfitPreviews.Push(PreviewBitmap(Mid(assets.walk, 6), rect[2], rect[3], rect))
+    end for
+    chooser = {selectedOutfit: 2}
+    m.indoorOutfitIndex = 0
+    DrawUpstairs(screen, "bedroom", titleFont, labelFont, bodyFont, {})
+    DrawIndoorOutfitChooser(screen, chooser, titleFont, labelFont, bodyFont)
+    SaveIndoorPreview(screen, "outfit-picker")
+    for outfit = 2 to 3
+        m.indoorOutfitIndex = outfit
+        assets = IndoorWardrobeAssets(outfit)
+        m.indoorSeatSprites = []
+        for col = 0 to 3
+            m.indoorSeatSprites.Push(PreviewBitmap(Mid(assets.seat, 6), 160, 208, [col * 160, 0, 160, 208]))
+        end for
+        DrawHouse(screen, titleFont, labelFont, labelFont, bodyFont)
+        DrawIndoorSitting(screen, FindIndoorSeat("house", "sit_livingsofa"), 0, &hF05A9DFF)
+        SaveIndoorPreview(screen, "seated-outfit-" + outfit.ToStr())
+    end for
+    InitializeIndoorPreviewSprites()
+    m.livingRoomPony = CreateLivingRoomPony()
+    print "PASS: pony mount, steering, furniture boundaries, dismount and outfit artwork"
     DrawHouseStairs(screen, labelFont, bodyFont)
     SaveIndoorPreview(screen, "stairs")
     DrawUpstairs(screen, "upstairs", titleFont, labelFont, bodyFont, {})
@@ -89,22 +143,30 @@ sub Main()
         CheckIndoor(not ShouldStandFromIndoorSeat(key, true, {action: "dressup"}), "standing logic does not cancel other activities")
     end for
     world = {}
-    outfit = RecordIndoorResult(world, "bedroom", "dressup", 0)
-    CheckIndoor(outfit = 1 and world["bedroom:dressup"], "dress-up selects a lasting new outfit")
-    CheckIndoor(RecordIndoorResult(world, "bedroom", "dressup", 1) = 2, "dress-up cycles to the blue outfit")
-    CheckIndoor(RecordIndoorResult(world, "bedroom", "dressup", 2) = 0, "dress-up can return to pink")
-    outfit = 0
-    replayWorld = {}
-    for each expectedOutfit in [1, 2, 0, 1, 2, 0]
-        outfit = RecordIndoorResult(replayWorld, "bedroom", "dressup", outfit)
-        CheckIndoor(outfit = expectedOutfit, "every dress-up play advances pink, lavender, blue, then pink")
-        ResetIndoorRoomOnExit(replayWorld, "bedroom", "upstairs")
+    CheckIndoor(RecordIndoorResult(world, "bedroom", "dressup", 0) = 0, "finishing dress-up does not automatically rotate clothes")
+    CheckIndoor(RecordIndoorResult(world, "bedroom", "dressup", 3) = 3, "completion preserves the chosen cowgirl outfit")
+    picker = {action: "dressup"}
+    InitializeIndoorOutfitChooser(picker, 1)
+    CheckIndoor(IsIndoorOutfitChooser(picker) and picker.selectedOutfit = 1, "picker starts on the outfit currently worn")
+    CheckIndoor(HandleIndoorOutfitChoice(picker, 5, true) = "changed" and picker.selectedOutfit = 2, "right selects princess")
+    CheckIndoor(HandleIndoorOutfitChoice(picker, 5, true) = "changed" and picker.selectedOutfit = 3, "right selects cowgirl")
+    CheckIndoor(HandleIndoorOutfitChoice(picker, 5, true) = "changed" and picker.selectedOutfit = 0, "picker wraps to original clothes")
+    CheckIndoor(HandleIndoorOutfitChoice(picker, 4, true) = "changed" and picker.selectedOutfit = 3, "left wraps to cowgirl")
+    CheckIndoor(HandleIndoorOutfitChoice(picker, 6, true) = "confirm" and picker.selectedOutfit = 3, "OK confirms the selected outfit")
+    CheckIndoor(HandleIndoorOutfitChoice(picker, 0, true) = "cancel", "Back cancels the picker")
+    CheckIndoor(HandleIndoorOutfitChoice(picker, 4, false) = "" and picker.selectedOutfit = 3, "button release does not change the selection")
+    CheckIndoor(IndoorOutfitName(0) = "ORIGINAL" and IndoorOutfitName(1) = "PURPLE" and IndoorOutfitName(2) = "PRINCESS" and IndoorOutfitName(3) = "COWGIRL", "all four requested outfits are available")
+    CheckIndoor(clips.DoesExist(IndoorOutfitChooserInstruction()), "picker instructions have recorded narration")
+    for index = 0 to 3
+        CheckIndoor(clips.DoesExist(IndoorOutfitSpokenName(index)), "each outfit has a recorded spoken label")
     end for
-    for outfitIndex = 0 to 2
+    for outfitIndex = 0 to 3
         bounds = IndoorWardrobeWalkBounds(outfitIndex)
+        assets = IndoorWardrobeAssets(outfitIndex)
+        m.indoorOutfitIndex = outfitIndex
         for direction = 0 to 3
             rect = bounds[direction]
-            m.characterSprites[direction] = PreviewBitmap("images/wardrobe-walk-" + Str(outfitIndex).Trim() + ".png", rect[2], rect[3], rect)
+            m.characterSprites[direction] = PreviewBitmap(Mid(assets.walk, 6), rect[2], rect[3], rect)
         end for
         for direction = 0 to 3
             screen.commands = []
@@ -114,7 +176,7 @@ sub Main()
             outfitDraw = screen.commands[1]
             CheckIndoor(walkDraw[1] = outfitDraw[1] and walkDraw[2] = outfitDraw[2], "dress-up stays at the walking position")
             CheckIndoor(walkDraw[3] = outfitDraw[3] and walkDraw[4] = outfitDraw[4], "dress-up keeps the walking scale")
-            CheckIndoor(Abs(walkDraw[4] * bounds[direction][3] - 78) < 0.01, "every outfit and direction has the same visible height")
+            CheckIndoor(Abs(walkDraw[4] * IndoorWardrobeBodyHeight(outfitIndex, direction) - 78) < 0.01, "every outfit keeps the same body scale under its accessories")
         end for
     end for
     screen.commands = []
@@ -134,6 +196,7 @@ sub Main()
         voice.speaking = false
         CheckIndoor(UpdateIndoorStory(task, voice), "story completes after all sentences finish")
     end for
+    m.indoorOutfitIndex = 1
     bounds = IndoorWardrobeWalkBounds(1)
     for col = 0 to 3
         rect = bounds[col]
