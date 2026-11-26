@@ -206,6 +206,7 @@ sub LoadUpstairsArtwork()
     ' Keep room backdrops out of the startup texture budget on smaller Roku TVs.
     m.upstairsBackdrops = {}
     m.loadedUpstairsArea = ""
+    m.upstairsBackdropUri = ""
     m.upstairsActivitySprites = []
     LoadIndoorSeatArtwork()
     LoadIndoorWorldArtwork()
@@ -213,9 +214,15 @@ sub LoadUpstairsArtwork()
 end sub
 
 sub UpdateUpstairsArtwork(area)
-    if m.loadedUpstairsArea = area then return
+    if m.loadedUpstairsArea = area
+        if m.upstairsBackdropUri <> "" then UpdateUpstairsBackdrop(area)
+        return
+    end if
     ResetIndoorRoomOnExit(m.indoorWorld, m.loadedUpstairsArea, area)
-    if m.loadedUpstairsArea = "house" and area <> "house" then m.livingRoomPony = CreateLivingRoomPony()
+    if m.loadedUpstairsArea = "house"
+        m.livingRoomPony = CreateLivingRoomPony()
+        m.livingRoomPonyRiders = []
+    end if
     m.upstairsActivitySprites = []
     m.indoorBedForeground = invalid
     m.indoorDrawingSteps = invalid
@@ -223,15 +230,33 @@ sub UpdateUpstairsArtwork(area)
     m.indoorPuzzleDone = invalid
     m.upstairsBackdrops = {}
     m.loadedUpstairsArea = area
-    uri = ""
-    if area = "upstairs" then uri = "pkg:/images/upstairs-hall.jpg"
-    if area = "bedroom" then uri = "pkg:/images/upstairs-bedroom.jpg"
-    if area = "playroom" then uri = "pkg:/images/upstairs-playroom.jpg"
-    if area = "bonusroom" then uri = "pkg:/images/upstairs-bonusroom-ready.jpg"
-    if area = "parentsroom" then uri = "pkg:/images/upstairs-parentsroom.jpg"
-    if uri <> "" then m.upstairsBackdrops[area] = CreateObject("roBitmap", uri)
+    m.upstairsBackdropUri = ""
+    m.upstairsBackdropRetry = 0
+    if area = "upstairs" then m.upstairsBackdropUri = "pkg:/images/upstairs-hall.jpg"
+    if area = "bedroom" then m.upstairsBackdropUri = "pkg:/images/upstairs-bedroom.jpg"
+    if area = "playroom" then m.upstairsBackdropUri = "pkg:/images/upstairs-playroom.jpg"
+    if area = "bonusroom" then m.upstairsBackdropUri = "pkg:/images/upstairs-bonusroom-ready.jpg"
+    if area = "parentsroom" then m.upstairsBackdropUri = "pkg:/images/upstairs-parentsroom.jpg"
+    if m.upstairsBackdropUri <> "" then UpdateUpstairsBackdrop(area)
     LoadIndoorActivityArtwork(area)
     LoadIndoorRoomResults(area)
+end sub
+
+sub UpdateUpstairsBackdrop(area)
+    if m.upstairsBackdropRetry > 0
+        m.upstairsBackdropRetry = m.upstairsBackdropRetry - 1
+        return
+    end if
+    backdrop = CreateObject("roBitmap", m.upstairsBackdropUri)
+    if backdrop = invalid
+        ' Allow old room textures to be reclaimed before retrying.
+        m.upstairsBackdropRetry = 30
+        return
+    end if
+    m.upstairsBackdrops[area] = backdrop
+    m.upstairsBackdropUri = ""
+    if area = "bedroom" then m.indoorBedForeground = CreateObject("roRegion", backdrop, 0, 380, 315, 125)
+    if area = "parentsroom" then m.indoorBedForeground = CreateObject("roRegion", backdrop, 0, 385, 390, 150)
 end sub
 
 function IsSeatAction(action)
@@ -273,6 +298,7 @@ sub DrawIndoorSitting(screen, seat, frame, dressColor)
         referenceHeight = 192
         hipY = 134.4
         if m.indoorOutfitIndex = 2 or m.indoorOutfitIndex = 3 then hipY = 150.4
+        if m.indoorOutfitIndex >= 4 then hipY = 142
         scale = height / referenceHeight
         hipX = 0.5
         if pose = 1 then hipX = 0.70

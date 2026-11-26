@@ -1,7 +1,12 @@
 function LoadNarrationClips()
     clips = {}
+    clips["Anna outfit."] = "pkg:/audio/narration/bc01d7d8e7d408ac.mp3"
+    clips["Ballerina outfit."] = "pkg:/audio/narration/170adaaad0f43444.mp3"
     clips["Cowgirl outfit."] = "pkg:/audio/narration/e6a8a8f78778dc9d.mp3"
+    clips["Doctor outfit."] = "pkg:/audio/narration/246e751fc8a63706.mp3"
+    clips["Elsa outfit."] = "pkg:/audio/narration/7ed8dfc5b57b4a28.mp3"
     clips["Every happy day becomes another wonderful family memory."] = "pkg:/audio/narration/019d3c93312f1963.mp3"
+    clips["Fairy outfit."] = "pkg:/audio/narration/ee65e47b5fec7a0c.mp3"
     clips["GIGI SAYS: YOU CAN DO IT!. Begin by petting Stitch!"] = "pkg:/audio/narration/bc8c8bc13dd65eb6.mp3"
     clips["GIGI SAYS: YOU CAN DO IT!. Blow big bubbles for Pops' backyard story!"] = "pkg:/audio/narration/a9d89411156d8e39.mp3"
     clips["GIGI SAYS: YOU CAN DO IT!. Blow big bubbles to show Gigi!"] = "pkg:/audio/narration/ad6b104868604bf0.mp3"
@@ -107,6 +112,7 @@ function LoadNarrationClips()
     clips["Genevieve found a tiny butterfly resting beside her window."] = "pkg:/audio/narration/90a511c7bf0f323a.mp3"
     clips["Here are Mommy, Daddy, and Genevieve. This is our family."] = "pkg:/audio/narration/bcc7422d6227aa0a.mp3"
     clips["Hop on your pony! Use the arrow buttons to ride around the living room. Press OK to get off."] = "pkg:/audio/narration/b868d469fa28d942.mp3"
+    clips["Ladybug outfit."] = "pkg:/audio/narration/ab09ebd206f5f0af.mp3"
     clips["MISSION COMPLETE!. Fly home to Daddy!"] = "pkg:/audio/narration/e328cc48f9efd6df.mp3"
     clips["MISSION COMPLETE!. Fly home to Gigi!"] = "pkg:/audio/narration/4051f01f8553de32.mp3"
     clips["MISSION COMPLETE!. Fly home to Mommy!"] = "pkg:/audio/narration/377d8dce24aac097.mp3"
@@ -325,6 +331,7 @@ function LoadNarrationClips()
     clips["PAPPY SAYS: YOU CAN DO IT!. Water the garden flowers for Mommy!"] = "pkg:/audio/narration/1c2c6819b09e9d60.mp3"
     clips["PAPPY SAYS: YOU CAN DO IT!. Water the garden flowers for Pops!"] = "pkg:/audio/narration/d52e0b7ef202241c.mp3"
     clips["PAPPY SAYS: YOU CAN DO IT!. Zoom down the slide!"] = "pkg:/audio/narration/66632ab8ecd6cac4.mp3"
+    clips["Pirate outfit."] = "pkg:/audio/narration/98f84520eb143764.mp3"
     clips["Princess outfit."] = "pkg:/audio/narration/58377329c71b91c2.mp3"
     clips["Purple outfit."] = "pkg:/audio/narration/aaeec8c3598b390f.mp3"
     clips["STEP COMPLETE!. Fly home for your next trip!"] = "pkg:/audio/narration/f9d55eecd3de142f.mp3"

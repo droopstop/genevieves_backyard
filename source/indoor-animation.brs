@@ -1,7 +1,6 @@
 ' Only the active room's twelve painted frames occupy texture memory.
 sub LoadIndoorActivityArtwork(area)
     m.upstairsActivitySprites = []
-    m.indoorBedForeground = invalid
     m.indoorDrawingSteps = invalid
     uri = ""
     if area = "bedroom" then uri = "pkg:/images/indoor-activity-bedroom.png"
@@ -11,10 +10,6 @@ sub LoadIndoorActivityArtwork(area)
     if uri = "" then return
     atlas = CreateObject("roBitmap", uri)
     if atlas = invalid then return
-    if m.upstairsBackdrops[area] <> invalid
-        if area = "bedroom" then m.indoorBedForeground = CreateObject("roRegion", m.upstairsBackdrops[area], 0, 380, 315, 125)
-        if area = "parentsroom" then m.indoorBedForeground = CreateObject("roRegion", m.upstairsBackdrops[area], 0, 385, 390, 150)
-    end if
     if area = "playroom" then m.indoorDrawingSteps = CreateObject("roBitmap", "pkg:/images/indoor-drawing-steps.png")
     bounds = IndoorActivityBounds(area)
     for row = 0 to 2

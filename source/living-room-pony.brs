@@ -12,6 +12,10 @@ sub LoadLivingRoomPonyArtwork()
             m.livingRoomPonySprites.Push(CreateObject("roRegion", atlas, rect[0], rect[1], rect[2], rect[3]))
         end for
     end if
+end sub
+
+sub LoadLivingRoomPonyRiders()
+    if m.livingRoomPonyRiders.Count() > 0 then return
     atlas = CreateObject("roBitmap", "pkg:/images/living-room-pony-riders.png")
     if atlas <> invalid
         for each rect in LivingRoomPonyBounds(true)
@@ -39,6 +43,7 @@ function LivingRoomPonyNearby(x, y, pony)
 end function
 
 function StartLivingRoomPonyRide(playerX, playerY, facing)
+    if m.indoorOutfitIndex = invalid or m.indoorOutfitIndex < 4 then LoadLivingRoomPonyRiders()
     m.livingRoomPony.mounted = true
     m.livingRoomPony.moving = false
     return {area: "house", action: "ridepony", frame: 0, duration: 2147483647, x: playerX, y: playerY, facing: facing}
@@ -79,15 +84,22 @@ end function
 sub DrawLivingRoomPony(screen, mounted)
     pony = m.livingRoomPony
     if pony = invalid then return
+    sprite = invalid
+    scale = 112 / 168
     if mounted
-        if m.livingRoomPonyRiders.Count() < 16 then return
         index = m.indoorOutfitIndex
         if index = invalid then index = 0
-        sprite = m.livingRoomPonyRiders[index * 4 + pony.facing]
-        scale = 112 / 168
-    else
+        if index < 4
+            riderIndex = index * 4 + pony.facing
+            if m.livingRoomPonyRiders.Count() > riderIndex then sprite = m.livingRoomPonyRiders[riderIndex]
+        else if m.indoorCostumeRiders <> invalid
+            if m.indoorCostumeRiders.Count() > pony.facing then sprite = m.indoorCostumeRiders[pony.facing]
+        end if
+    end if
+    if sprite = invalid
         if m.livingRoomPonySprites.Count() < 4 then return
         sprite = m.livingRoomPonySprites[pony.facing]
+        if sprite = invalid then return
         scale = 64 / sprite.GetHeight()
     end if
     bob = 0
@@ -102,5 +114,5 @@ end sub
 
 function LivingRoomPonyBounds(riding)
     if riding then return [[41, 18, 78, 168], [199, 18, 81, 168], [337, 18, 126, 168], [497, 18, 125, 168], [41, 210, 78, 168], [199, 210, 81, 168], [337, 210, 126, 168], [497, 210, 126, 168], [36, 397, 88, 173], [197, 397, 85, 173], [337, 397, 126, 173], [497, 397, 125, 173], [37, 582, 86, 180], [195, 582, 90, 180], [334, 582, 132, 180], [494, 582, 132, 180]]
-    return [[18, 26, 123, 160], [167, 26, 145, 160], [323, 27, 154, 159], [493, 26, 134, 160]]
+    return [[37, 26, 86, 160], [199, 26, 82, 160], [323, 28, 154, 158], [483, 30, 154, 156]]
 end function

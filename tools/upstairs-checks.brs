@@ -43,8 +43,16 @@ sub Main()
     CheckIndoor(clips.DoesExist(LivingRoomPonyInstructions()), "pony riding instructions are recorded")
     CheckIndoor(clips.DoesExist(LivingRoomPonyDismountWords()), "pony getting-off narration is recorded")
     pony.x = 630 : pony.y = 580 : pony.facing = 3 : pony.mounted = true
-    for outfit = 0 to 3
+    outfitCount = IndoorOutfitNames().Count()
+    for outfit = 0 to outfitCount - 1
         m.indoorOutfitIndex = outfit
+        assets = IndoorWardrobeAssets(outfit)
+        if not assets.DoesExist("seat")
+            m.indoorCostumeRiders = []
+            for col = 0 to 3
+                m.indoorCostumeRiders.Push(PreviewBitmap(Mid(assets.walk, 6), 160, 192, [col * 160, 416, 160, 192]))
+            end for
+        end if
         DrawHouse(screen, titleFont, labelFont, labelFont, bodyFont)
         DrawPops(screen, CreatePops(), invalid, false, labelFont, bodyFont)
         DrawLivingRoomPony(screen, true)
@@ -52,22 +60,27 @@ sub Main()
         SaveIndoorPreview(screen, "pony-outfit-" + outfit.ToStr())
     end for
     m.indoorOutfitPreviews = []
-    for outfit = 0 to 3
-        rect = IndoorWardrobeWalkBounds(outfit)[0]
-        assets = IndoorWardrobeAssets(outfit)
-        m.indoorOutfitPreviews.Push(PreviewBitmap(Mid(assets.walk, 6), rect[2], rect[3], rect))
+    for outfit = 0 to outfitCount - 1
+        rect = IndoorOutfitPreviewBounds(outfit)
+        m.indoorOutfitPreviews.Push(PreviewBitmap("images/wardrobe-previews.png", rect[2], rect[3], rect))
     end for
-    chooser = {selectedOutfit: 2}
     m.indoorOutfitIndex = 0
-    DrawUpstairs(screen, "bedroom", titleFont, labelFont, bodyFont, {})
-    DrawIndoorOutfitChooser(screen, chooser, titleFont, labelFont, bodyFont)
-    SaveIndoorPreview(screen, "outfit-picker")
-    for outfit = 2 to 3
+    for each selected in [2, 4, 8]
+        DrawUpstairs(screen, "bedroom", titleFont, labelFont, bodyFont, {})
+        DrawIndoorOutfitChooser(screen, {selectedOutfit: selected}, titleFont, labelFont, bodyFont)
+        name = "outfit-picker"
+        if selected > 2 then name = name + "-" + selected.ToStr()
+        SaveIndoorPreview(screen, name)
+    end for
+    for outfit = 2 to outfitCount - 1
         m.indoorOutfitIndex = outfit
         assets = IndoorWardrobeAssets(outfit)
+        seatUri = assets.walk
+        seatY = 208
+        if assets.DoesExist("seat") then seatUri = assets.seat : seatY = 0
         m.indoorSeatSprites = []
         for col = 0 to 3
-            m.indoorSeatSprites.Push(PreviewBitmap(Mid(assets.seat, 6), 160, 208, [col * 160, 0, 160, 208]))
+            m.indoorSeatSprites.Push(PreviewBitmap(Mid(seatUri, 6), 160, 208, [col * 160, seatY, 160, 208]))
         end for
         DrawHouse(screen, titleFont, labelFont, labelFont, bodyFont)
         DrawIndoorSitting(screen, FindIndoorSeat("house", "sit_livingsofa"), 0, &hF05A9DFF)
@@ -150,17 +163,19 @@ sub Main()
     CheckIndoor(IsIndoorOutfitChooser(picker) and picker.selectedOutfit = 1, "picker starts on the outfit currently worn")
     CheckIndoor(HandleIndoorOutfitChoice(picker, 5, true) = "changed" and picker.selectedOutfit = 2, "right selects princess")
     CheckIndoor(HandleIndoorOutfitChoice(picker, 5, true) = "changed" and picker.selectedOutfit = 3, "right selects cowgirl")
+    for each costume in ["BALLERINA", "LADYBUG", "FAIRY", "ANNA", "ELSA", "DOCTOR", "PIRATE"]
+        CheckIndoor(HandleIndoorOutfitChoice(picker, 5, true) = "changed" and IndoorOutfitName(picker.selectedOutfit) = costume, "picker reaches " + costume)
+    end for
     CheckIndoor(HandleIndoorOutfitChoice(picker, 5, true) = "changed" and picker.selectedOutfit = 0, "picker wraps to original clothes")
-    CheckIndoor(HandleIndoorOutfitChoice(picker, 4, true) = "changed" and picker.selectedOutfit = 3, "left wraps to cowgirl")
-    CheckIndoor(HandleIndoorOutfitChoice(picker, 6, true) = "confirm" and picker.selectedOutfit = 3, "OK confirms the selected outfit")
+    CheckIndoor(HandleIndoorOutfitChoice(picker, 4, true) = "changed" and picker.selectedOutfit = outfitCount - 1, "left wraps to pirate")
+    CheckIndoor(HandleIndoorOutfitChoice(picker, 6, true) = "confirm" and picker.selectedOutfit = outfitCount - 1, "OK confirms the selected outfit")
     CheckIndoor(HandleIndoorOutfitChoice(picker, 0, true) = "cancel", "Back cancels the picker")
-    CheckIndoor(HandleIndoorOutfitChoice(picker, 4, false) = "" and picker.selectedOutfit = 3, "button release does not change the selection")
-    CheckIndoor(IndoorOutfitName(0) = "ORIGINAL" and IndoorOutfitName(1) = "PURPLE" and IndoorOutfitName(2) = "PRINCESS" and IndoorOutfitName(3) = "COWGIRL", "all four requested outfits are available")
+    CheckIndoor(HandleIndoorOutfitChoice(picker, 4, false) = "" and picker.selectedOutfit = outfitCount - 1, "button release does not change the selection")
     CheckIndoor(clips.DoesExist(IndoorOutfitChooserInstruction()), "picker instructions have recorded narration")
-    for index = 0 to 3
+    for index = 0 to outfitCount - 1
         CheckIndoor(clips.DoesExist(IndoorOutfitSpokenName(index)), "each outfit has a recorded spoken label")
     end for
-    for outfitIndex = 0 to 3
+    for outfitIndex = 0 to outfitCount - 1
         bounds = IndoorWardrobeWalkBounds(outfitIndex)
         assets = IndoorWardrobeAssets(outfitIndex)
         m.indoorOutfitIndex = outfitIndex

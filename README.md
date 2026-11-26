@@ -55,8 +55,9 @@ starts with fresh activities:
 folded blankets and pillows, dolls placed in the dollhouse, pretend food on the
 kitchen counter, a rainbow on the whiteboard, the completed wooden puzzle,
 illuminated and twinkling Christmas lights, a family photo, and arranged flowers.
-Walking up to the bedroom dresser opens a four-outfit picker: Original, Purple,
-Princess, or Cowgirl. Use arrows to choose, OK to wear it, or Back to cancel.
+Walking up to the bedroom dresser opens the outfit picker. Choose from Original,
+Purple, Princess, Cowgirl, Ballerina, Ladybug, Fairy, Anna, Elsa, Doctor, and
+Pirate. Use the arrows to move through the outfits, OK to wear one, or Back to cancel.
 Walking and dress-up keep the same body size, including beneath hats and tiaras;
 walking, sitting, and pony riding use the chosen outfit.
 

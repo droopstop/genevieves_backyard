@@ -18,7 +18,7 @@ sub Main()
     texts.Push(LivingRoomPonyInstructions())
     texts.Push(LivingRoomPonyDismountWords())
     texts.Push(IndoorOutfitChooserInstruction())
-    for index = 0 to 3
+    for index = 0 to IndoorOutfitNames().Count() - 1
         texts.Push(IndoorOutfitSpokenName(index))
     end for
     texts.Push(UpstairsPrompt("stairsup") + ".")
